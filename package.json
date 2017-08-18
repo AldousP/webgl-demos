@@ -1,0 +1,9 @@
+{
+  "name": "webgl-demos",
+  "version": "1.0.0",
+  "description": "webgl experiments",
+  "main": "index.js",
+  "repository": "https://github.com/AldousP/webgl-demos",
+  "author": "Aldous",
+  "license": "MIT"
+}
