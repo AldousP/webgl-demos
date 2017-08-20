@@ -1,0 +1,18 @@
+canvas {
+  background-color: black;
+}
+
+.letterhead {
+  background-color: #327ac7;
+}
+
+.content-container {
+  height: 356px;
+}
+
+.canvas-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
