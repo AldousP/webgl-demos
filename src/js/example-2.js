@@ -8,7 +8,21 @@
 		frag: 'glsl/fragment/example_2.glsl'
 	}, compileShaders);
 
-	var squareVerticesBuffer;
+	var positionAttributeLocation;
+	var positionBuffer;
+	var positions = [
+		-.75, .55,
+		.75, .55,
+		0, -.55
+	];
+
+	var colorAttributeLocation;
+	var colorBuffer;
+	var colors = [
+		0.0,  0.0,  1.0,  1.0,
+		1.0,  0.0,  0.0,  1.0,
+		0.0,  1.0,  0.0,  1.0
+	];
 
 	/**
 	 * App start code.
@@ -29,19 +43,32 @@
 	 * Perform render calls.
 	 */
 	function renderLoop () {
+		if (!program)
 
-		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+		gl.clear(gl.COLOR_BUFFER_BIT);
+		gl.useProgram(program);
+		gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-		var perspectiveMatrix = makePerspective(45, 640.0/480.0, 0.1, 100.0);
+		var size = 2;          // 2 components per iteration
+		var type = gl.FLOAT;   // the data is 32bit floats
+		var normalize = false; // don't normalize the data
+		var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
+		var offset = 0;        // start at the beginning of the buffer
+		gl.vertexAttribPointer(
+			positionAttributeLocation, size, type, normalize, stride, offset);
 
-		loadIdentity();
-		mvTranslate([-0.0, 0.0, -6.0]);
 
-		gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
-		gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
-		setMatrixUniforms();
-		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+		gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+		var size = 4;          // 4 components per iteration
+		var type = gl.FLOAT;   // the data is 32bit floats
+		var normalize = false; // don't normalize the data
+		var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
+		var offset = 0;        // start at the beginning of the buffer
+		gl.vertexAttribPointer(
+			colorAttributeLocation, size, type, normalize, stride, offset);
 
+
+		gl.drawArrays(gl.TRIANGLES, offset, 3);
 		window.requestAnimationFrame(renderLoop);
 	}
 
@@ -49,18 +76,26 @@
 	 * Init shader attributes once program has loaded.
 	 */
 	function programInit () {
+		positionAttributeLocation = gl.getAttribLocation(program, "a_vertexPosition");
+		positionBuffer = gl.createBuffer();
 
-		squareVerticesBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
+		gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
-		var vertices = [
-			1.0,  1.0,  0.0,
-			-1.0, 1.0,  0.0,
-			1.0,  -1.0, 0.0,
-			-1.0, -1.0, 0.0
-		];
+		colorAttributeLocation = gl.getAttribLocation(program, 'a_vertexColor');
+		colorBuffer = gl.createBuffer();
 
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+		gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+
+		/**
+		 * These calls need to move to a frame by frame context if multiple
+		 * shaders are used in a scene.
+		 */
+		gl.enableVertexAttribArray(positionAttributeLocation);
+		gl.enableVertexAttribArray(colorAttributeLocation);
+
+		gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
 		/**
 		 * Start render loop.

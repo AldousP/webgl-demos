@@ -1,8 +1,10 @@
-attribute vec3 aVertexPosition;
+attribute vec3 a_vertexPosition;
+attribute vec4 a_vertexColor;
 
-uniform mat4 uMVMatrix;
-uniform mat4 uPMatrix;
+varying lowp vec4 v_color;
 
-void main(void) {
-    gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+// all shaders have a main function
+void main() {
+    gl_Position = vec4(a_vertexPosition, 1.0);
+    v_color = a_vertexColor;
 }
