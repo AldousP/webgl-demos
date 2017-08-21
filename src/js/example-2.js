@@ -8,9 +8,7 @@
 		frag: 'glsl/fragment/example_2.glsl'
 	}, compileShaders);
 
-	var positionAttributeLocation;
-	var positionBuffer;
-	var positions;
+	var squareVerticesBuffer;
 
 	/**
 	 * App start code.
@@ -31,25 +29,19 @@
 	 * Perform render calls.
 	 */
 	function renderLoop () {
-		if (!program)
 
-		gl.clearColor(0, 0, 0, 0);
-		gl.clear(gl.COLOR_BUFFER_BIT);
-		gl.useProgram(program);
-		gl.enableVertexAttribArray(positionAttributeLocation);
-		gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-		var size = 2;          // 2 components per iteration
-		var type = gl.FLOAT;   // the data is 32bit floats
-		var normalize = false; // don't normalize the data
-		var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
-		var offset = 0;        // start at the beginning of the buffer
-		gl.vertexAttribPointer(
-			positionAttributeLocation, size, type, normalize, stride, offset);
+		var perspectiveMatrix = makePerspective(45, 640.0/480.0, 0.1, 100.0);
 
-		var primitiveType = gl.TRIANGLES;
-		var count = 3;
-		gl.drawArrays(primitiveType, offset, count);
+		loadIdentity();
+		mvTranslate([-0.0, 0.0, -6.0]);
+
+		gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
+		gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+		setMatrixUniforms();
+		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
 		window.requestAnimationFrame(renderLoop);
 	}
 
@@ -57,18 +49,18 @@
 	 * Init shader attributes once program has loaded.
 	 */
 	function programInit () {
-		positionAttributeLocation = gl.getAttribLocation(program, "a_position");
-		positionBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-		// three 2d points
-		positions = [
-			0, 0,
-			0, 0.5,
-			0.7, 0
-		];
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-		gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
+		squareVerticesBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
+
+		var vertices = [
+			1.0,  1.0,  0.0,
+			-1.0, 1.0,  0.0,
+			1.0,  -1.0, 0.0,
+			-1.0, -1.0, 0.0
+		];
+
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
 		/**
 		 * Start render loop.
