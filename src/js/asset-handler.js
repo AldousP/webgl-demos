@@ -2,8 +2,12 @@ function AssetHandler (map, onComplete) {
 	this.loadedFileCount = 0;
 	this.map = map;
 	this.assets = {};
+  /**
+   * Called when every file has finished loading.
+   */
+  this.onCompleted = onComplete;
 
-	/**
+  /**
 	 * Begins loading the assets.
 	 */
 	this.load = function () {
@@ -26,11 +30,6 @@ function AssetHandler (map, onComplete) {
 			this.onCompleted(this.assets);
 		}
 	};
-
-	/**
-	 * Called when every file has finished loading.
-	 */
-	this.onCompleted = onComplete;
 
 	/**
 	 * Loads a file with the given handle from the domain.
