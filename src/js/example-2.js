@@ -30,6 +30,8 @@
   var rotation = [0, 0, 0];
   var scale = [1, 1, 1];
 
+  var last = new Date().getTime();
+
 	/**
 	 * App start code.
 	 */
@@ -48,7 +50,11 @@
 	/**
 	 * Perform render calls.
 	 */
+	var delta;
 	function renderLoop () {
+	  var current = new Date().getTime();
+	  delta = (current - last) / 1000;
+	  last = current;
 
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     gl.clear(gl.COLOR_BUFFER_BIT);
@@ -92,8 +98,8 @@
 
     gl.drawArrays(gl.TRIANGLES, offset, 3);
 
-    rotation[0] += degToRad(1);
-    rotation[2] += degToRad(1);
+    rotation[0] += degToRad(10 * delta);
+    rotation[2] += degToRad(10 * delta);
 		window.requestAnimationFrame(renderLoop);
 	}
 
