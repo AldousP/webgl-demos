@@ -13,17 +13,19 @@
 	var positionBuffer;
 	var matrixBuffer;
 	var positions = [
-		-.75, .55,
-		.75, .55,
-		0, -.55
-	];
+		-.25, .25,
+		-.25, -.25,
+    .25, .25,
+    .25, -.25
+  ];
 
 	var colorLocation;
 	var colorBuffer;
 	var colors = [
 		0.0,  0.0,  1.0,  1.0,
 		1.0,  0.0,  0.0,  1.0,
-		0.0,  1.0,  0.0,  1.0
+		0.0,  1.0,  0.0,  1.0,
+		1.0,  0.0,  1.0,  0.0
 	];
 
   var translation = [0, 0, 0];
@@ -96,7 +98,7 @@
 
     gl.uniformMatrix4fv(matrixLocation, false, matrix);
 
-    gl.drawArrays(gl.TRIANGLES, offset, 3);
+    gl.drawArrays(gl.TRIANGLE_STRIP, offset, 4);
 
     rotation[0] += degToRad(10 * delta);
     rotation[2] += degToRad(10 * delta);
