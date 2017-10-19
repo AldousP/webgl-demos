@@ -4,11 +4,13 @@
 	var gl;
 	var program;
 	var assets = new AssetHandler({
-		vert: 'glsl/vertex/example_2.glsl',
-		frag: 'glsl/fragment/example_2.glsl'
+		vert: 'src/glsl/vertex/example_2.glsl',
+		frag: 'src/glsl/fragment/example_2.glsl',
+    rat: 'static/rat.png'
 	}, compileShaders);
 
 	var positionLocation;
+	var texcoordLocation;
 	var matrixLocation;
 	var positionBuffer;
 	var matrixBuffer;
@@ -21,6 +23,7 @@
 
 	var colorLocation;
 	var colorBuffer;
+	var texcoordsBuffer;
 	var colors = [
 		0.0,  0.0,  1.0,  1.0,
 		1.0,  0.0,  0.0,  1.0,
@@ -30,7 +33,7 @@
 
   var translation = [0, 0, 0];
   var rotation = [0, 0, 0];
-  var scale = [1, 1, 1];
+  var scale = [2, 2, 2];
 
   var last = new Date().getTime();
 
@@ -64,6 +67,7 @@
     // Use the default shader.
     gl.useProgram(program);
 
+    // Vertex data buffer
     gl.enableVertexAttribArray(positionLocation);
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     var size = 2;          // 2 components per iteration
@@ -73,6 +77,7 @@
 		var offset = 0;        // start at the beginning of the buffer
     gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset);
 
+    // Color data buffer
     gl.enableVertexAttribArray(colorLocation);
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
     var size = 4;          // 4 components per iteration
@@ -81,6 +86,11 @@
 		var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
 		var offset = 0;        // start at the beginning of the buffer
 		gl.vertexAttribPointer(colorLocation, size, type, normalize, stride, offset);
+
+		// Texture data buffer
+    gl.enableVertexAttribArray(texcoordLocation);
+    gl.bindBuffer(gl.ARRAY_BUFFER, texcoordsBuffer);
+    gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
 
     // Compute the matrices
     var matrix =  [
@@ -101,28 +111,68 @@
     gl.drawArrays(gl.TRIANGLE_STRIP, offset, 4);
 
     rotation[0] += degToRad(10 * delta);
-    rotation[2] += degToRad(10 * delta);
+    // rotation[2] += degToRad(10 * delta);
 		window.requestAnimationFrame(renderLoop);
 	}
+
+  function isPowerOf2(value) {
+    return (value & (value - 1)) == 0;
+  }
 
 	/**
 	 * Init shader attributes once program has loaded.
 	 */
 	function programInit () {
-		positionLocation = gl.getAttribLocation(program, "a_vertexPosition");
-		matrixLocation = gl.getUniformLocation(program, "u_matrix");
+		positionLocation = gl.getAttribLocation(program, 'a_vertexPosition');
+		texcoordLocation = gl.getAttribLocation(program,'a_texcoord');
+		matrixLocation = gl.getUniformLocation(program, 'u_matrix');
     colorLocation = gl.getAttribLocation(program, 'a_vertexColor');
 
     positionBuffer = gl.createBuffer();
 		matrixBuffer = gl.createBuffer();
     colorBuffer = gl.createBuffer();
+    texcoordsBuffer = gl.createBuffer();
 
-    // Fetch buffer for position data
+    // Set buffer data
 		gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, texcoordsBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+        0.0,  0.0,
+        1.0,  0.0,
+        1.0,  1.0,
+        0.0,  1.0
+      ]),
+    gl.STATIC_DRAW);
+
+
+    var texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
+
+    // Asynchronously load an image
+    var image = new Image();
+    image.src = "static/teapot.jpg";
+    image.addEventListener('load', function() {
+      // Now that the image has loaded make copy it to the texture.
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,gl.UNSIGNED_BYTE, image);
+
+      if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
+        // Yes, it's a power of 2. Generate mips.
+        gl.generateMipmap(gl.TEXTURE_2D);
+      } else {
+        // No, it's not a power of 2. Turn off mips and set wrapping to clamp to edge
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      }
+    });
+
 
 		/**
 		 * Start render loop.
