@@ -26,10 +26,10 @@ var colorLocation;
 var colorBuffer;
 var texcoordsBuffer;
 var colors = [
-  0.0,  0.0,  1.0,  1.0,
-  1.0,  0.0,  0.0,  1.0,
-  0.0,  1.0,  0.0,  1.0,
-  1.0,  0.0,  1.0,  0.0
+  0.0, 0.0, 1.0, 1.0,
+  1.0, 0.0, 0.0, 1.0,
+  0.0, 1.0, 0.0, 1.0,
+  1.0, 0.0, 1.0, 0.0
 ];
 
 var translation = [0, 0, 0];
@@ -94,11 +94,11 @@ function renderLoop () {
   gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
 
   // Compute the matrices
-  var matrix =  [
-    1,  0,  0,  0,
-    0,  1,  0,  0,
-    0,  0,  1,  0,
-    0,  0,  0, 1
+  var matrix = [
+    1, 0, 0, 0,
+    0, 1, 0, 0,
+    0, 0, 1, 0,
+    0, 0, 0, 1
   ];
 
   matrix = m4.translate(matrix, translation[0], translation[1], translation[2]);
@@ -116,7 +116,7 @@ function renderLoop () {
   window.requestAnimationFrame(renderLoop);
 }
 
-function isPowerOf2(value) {
+function isPowerOf2 (value) {
   return (value & (value - 1)) == 0;
 }
 
@@ -125,7 +125,7 @@ function isPowerOf2(value) {
  */
 function programInit () {
   positionLocation = gl.getAttribLocation(program, 'a_vertexPosition');
-  texcoordLocation = gl.getAttribLocation(program,'a_texcoord');
+  texcoordLocation = gl.getAttribLocation(program, 'a_texcoord');
   matrixLocation = gl.getUniformLocation(program, 'u_matrix');
   colorLocation = gl.getAttribLocation(program, 'a_vertexColor');
 
@@ -148,7 +148,7 @@ function programInit () {
       1, 0,
       1, 1
     ]),
-  gl.STATIC_DRAW);
+    gl.STATIC_DRAW);
 
 
   var texture = gl.createTexture();
@@ -159,10 +159,10 @@ function programInit () {
   var image = new Image();
   // image.data-src = imageData;
   image.src = imageData;
-  image.addEventListener('load', function() {
+  image.addEventListener('load', function () {
     // Now that the image has loaded make copy it to the texture.
     gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,gl.UNSIGNED_BYTE, image);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 
     if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
       // Yes, it's a power of 2. Generate mips.
@@ -212,7 +212,7 @@ function compileShaders () {
  * @param source GLSL shader source
  * @returns {*}
  */
-function createShader(gl, type, source) {
+function createShader (gl, type, source) {
   var shader = gl.createShader(type);
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
@@ -234,7 +234,7 @@ function createShader(gl, type, source) {
  * @param fragmentShader
  * @returns A linked shader program.
  */
-function createProgram(gl, vertexShader, fragmentShader) {
+function createProgram (gl, vertexShader, fragmentShader) {
   var program = gl.createProgram();
   gl.attachShader(program, vertexShader);
   gl.attachShader(program, fragmentShader);
@@ -253,11 +253,11 @@ function createProgram(gl, vertexShader, fragmentShader) {
  */
 init();
 
-function radToDeg(r) {
+function radToDeg (r) {
   return r * 180 / Math.PI;
 }
 
-function degToRad(d) {
+function degToRad (d) {
   return d * Math.PI / 180;
 }
 

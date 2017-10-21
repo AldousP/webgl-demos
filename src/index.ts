@@ -1,4 +1,4 @@
 require('static/css/app.css');
 require('static/css/app_layout.css');
 
-import './example-3';
+import './example-2';

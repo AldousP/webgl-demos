@@ -1,5 +1,5 @@
 var m4 = {
-  projection: function(width, height, depth) {
+  projection: function (width, height, depth) {
     // Note: This matrix flips the Y axis so 0 is at the top.
     return [
       2 / width, 0, 0, 0,
@@ -9,7 +9,7 @@ var m4 = {
     ];
   },
 
-  multiply: function(a, b) {
+  multiply: function (a, b) {
     var a00 = a[0 * 4 + 0];
     var a01 = a[0 * 4 + 1];
     var a02 = a[0 * 4 + 2];
@@ -62,16 +62,16 @@ var m4 = {
     ];
   },
 
-  translation: function(tx, ty, tz) {
+  translation: function (tx, ty, tz) {
     return [
-      1,  0,  0,  0,
-      0,  1,  0,  0,
-      0,  0,  1,  0,
+      1, 0, 0, 0,
+      0, 1, 0, 0,
+      0, 0, 1, 0,
       tx, ty, tz, 1,
     ];
   },
 
-  xRotation: function(angleInRadians) {
+  xRotation: function (angleInRadians) {
     var c = Math.cos(angleInRadians);
     var s = Math.sin(angleInRadians);
 
@@ -83,7 +83,7 @@ var m4 = {
     ];
   },
 
-  yRotation: function(angleInRadians) {
+  yRotation: function (angleInRadians) {
     var c = Math.cos(angleInRadians);
     var s = Math.sin(angleInRadians);
 
@@ -95,7 +95,7 @@ var m4 = {
     ];
   },
 
-  zRotation: function(angleInRadians) {
+  zRotation: function (angleInRadians) {
     var c = Math.cos(angleInRadians);
     var s = Math.sin(angleInRadians);
 
@@ -107,32 +107,32 @@ var m4 = {
     ];
   },
 
-  scaling: function(sx, sy, sz) {
+  scaling: function (sx, sy, sz) {
     return [
-      sx, 0,  0,  0,
-      0, sy,  0,  0,
-      0,  0, sz,  0,
-      0,  0,  0,  1,
+      sx, 0, 0, 0,
+      0, sy, 0, 0,
+      0, 0, sz, 0,
+      0, 0, 0, 1,
     ];
   },
 
-  translate: function(m, tx, ty, tz) {
+  translate: function (m, tx, ty, tz) {
     return m4.multiply(m, m4.translation(tx, ty, tz));
   },
 
-  xRotate: function(m, angleInRadians) {
+  xRotate: function (m, angleInRadians) {
     return m4.multiply(m, m4.xRotation(angleInRadians));
   },
 
-  yRotate: function(m, angleInRadians) {
+  yRotate: function (m, angleInRadians) {
     return m4.multiply(m, m4.yRotation(angleInRadians));
   },
 
-  zRotate: function(m, angleInRadians) {
+  zRotate: function (m, angleInRadians) {
     return m4.multiply(m, m4.zRotation(angleInRadians));
   },
 
-  scale: function(m, sx, sy, sz) {
+  scale: function (m, sx, sy, sz) {
     return m4.multiply(m, m4.scaling(sx, sy, sz));
   },
 };
