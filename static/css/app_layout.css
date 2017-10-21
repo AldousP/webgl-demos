@@ -1,7 +1,7 @@
 body {
   font-family: Arial, serif;
   margin: 0;
-  background-color: #e5e5e5;
+  background-color: #171718;
   font-size: 14px;
   color: black;
   padding: 0;
@@ -110,7 +110,7 @@ a:visited {
   margin: 12px auto 24px;
   flex-wrap: wrap;
   color: black;
-  background-color: white;
+  background-color: #28292e;
   border-radius: 3px;
   box-shadow: 0 0 6px 1px rgba(0, 0, 0, 0.12);
   position: absolute;

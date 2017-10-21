@@ -21,3 +21,10 @@ function setMatrixUniforms(gl, program, perspectiveMatrix) {
 	var mvUniform = gl.getUniformLocation(program, "uMVMatrix");
 	gl.uniformMatrix4fv(mvUniform, false, new Float32Array(mvMatrix.flatten()));
 }
+
+export {
+  loadIdentity,
+  multMatrix,
+  mvTranslate,
+  setMatrixUniforms
+}

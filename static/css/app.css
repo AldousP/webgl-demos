@@ -1,9 +1,10 @@
 canvas {
   background-color: black;
+  box-shadow: rgba(135, 146, 158, 0.12) 0 0 20px 10px;
 }
 
 .letterhead {
-  background-color: #327ac7;
+  background-color: #222527;
 }
 
 .content-container {
