@@ -38,9 +38,7 @@ var scale = [2, 2, 2];
 
 var last = new Date().getTime();
 
-/**
- * App start code.
- */
+
 function init () {
   var canvas = document.getElementById('webgl_example');
   gl = canvas.getContext('webgl');
@@ -49,76 +47,11 @@ function init () {
     console.error('No WebGL context available.');
     return;
   }
-
   compileShaders();
 }
 
-/**
- * Perform render calls.
- */
-var delta;
-function renderLoop () {
-  var current = new Date().getTime();
-  delta = (current - last) / 1000;
-  last = current;
+init();
 
-  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-  gl.clear(gl.COLOR_BUFFER_BIT);
-
-  // Use the default shader.
-  gl.useProgram(program);
-
-  // Vertex data buffer
-  gl.enableVertexAttribArray(positionLocation);
-  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-  var size = 2;          // 2 components per iteration
-  var type = gl.FLOAT;   // the data is 32bit floats
-  var normalize = false; // don't normalize the data
-  var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
-  var offset = 0;        // start at the beginning of the buffer
-  gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset);
-
-  // Color data buffer
-  gl.enableVertexAttribArray(colorLocation);
-  gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-  var size = 4;          // 4 components per iteration
-  var type = gl.FLOAT;   // the data is 32bit floats
-  var normalize = false; // don't normalize the data
-  var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
-  var offset = 0;        // start at the beginning of the buffer
-  gl.vertexAttribPointer(colorLocation, size, type, normalize, stride, offset);
-
-  // Texture data buffer
-  gl.enableVertexAttribArray(texcoordLocation);
-  gl.bindBuffer(gl.ARRAY_BUFFER, texcoordsBuffer);
-  gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
-
-  // Compute the matrices
-  var matrix =  [
-    1,  0,  0,  0,
-    0,  1,  0,  0,
-    0,  0,  1,  0,
-    0,  0,  0, 1
-  ];
-
-  matrix = m4.translate(matrix, translation[0], translation[1], translation[2]);
-  matrix = m4.xRotate(matrix, rotation[0]);
-  matrix = m4.yRotate(matrix, rotation[1]);
-  matrix = m4.zRotate(matrix, rotation[2]);
-  matrix = m4.scale(matrix, scale[0], scale[1], scale[2]);
-
-  gl.uniformMatrix4fv(matrixLocation, false, matrix);
-
-  gl.drawArrays(gl.TRIANGLE_STRIP, offset, 4);
-
-  rotation[0] += degToRad(10 * delta);
-  // rotation[2] += degToRad(10 * delta);
-  window.requestAnimationFrame(renderLoop);
-}
-
-function isPowerOf2(value) {
-  return (value & (value - 1)) == 0;
-}
 
 /**
  * Init shader attributes once program has loaded.
@@ -148,7 +81,7 @@ function programInit () {
       1.0,  1.0,
       0.0,  1.0
     ]),
-  gl.STATIC_DRAW);
+    gl.STATIC_DRAW);
 
 
   var texture = gl.createTexture();
@@ -205,6 +138,73 @@ function compileShaders () {
 }
 
 /**
+ * Perform render calls.
+ */
+var delta;
+
+
+function renderLoop () {
+  var current = new Date().getTime();
+  delta = (current - last) / 1000;
+  last = current;
+
+  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+
+  // Use the default shader.
+  gl.useProgram(program);
+
+  // Vertex data buffer
+  gl.enableVertexAttribArray(positionLocation);
+  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+  var size = 2;          // 2 components per iteration
+  var type = gl.FLOAT;   // the data is 32bit floats
+  var normalize = false; // don't normalize the data
+  var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
+  var offset = 0;        // start at the beginning of the buffer
+  gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset);
+
+  // Color data buffer
+  gl.enableVertexAttribArray(colorLocation);
+  gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+  var size = 4;          // 4 components per iteration
+  var type = gl.FLOAT;   // the data is 32bit floats
+  var normalize = false; // don't normalize the data
+  var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
+  var offset = 0;        // start at the beginning of the buffer
+  gl.vertexAttribPointer(colorLocation, size, type, normalize, stride, offset);
+
+  // Texture data buffer
+  gl.enableVertexAttribArray(texcoordLocation);
+  gl.bindBuffer(gl.ARRAY_BUFFER, texcoordsBuffer);
+  gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
+
+  // Compute the matrices
+  var matrix =  [
+    1,  0,  0,  0,
+    0,  1,  0,  0,
+    0,  0,  1,  0,
+    0,  0,  0, 1
+  ];
+
+  matrix = m4.translate(matrix, translation[0], translation[1], translation[2]);
+  matrix = m4.xRotate(matrix, rotation[0]);
+  matrix = m4.yRotate(matrix, rotation[1]);
+  matrix = m4.zRotate(matrix, rotation[2]);
+  matrix = m4.scale(matrix, scale[0], scale[1], scale[2]);
+
+  gl.uniformMatrix4fv(matrixLocation, false, matrix);
+  gl.drawArrays(gl.TRIANGLE_STRIP, offset, 4);
+
+  // rotation[0] += degToRad(10 * delta);
+  // rotation[2] += degToRad(10 * delta);
+
+
+  window.requestAnimationFrame(renderLoop);
+}
+
+
+/**
  * Returns a webGL shader for the provided source and parameters.
  *
  * @param gl a gl context
@@ -248,11 +248,13 @@ function createProgram(gl, vertexShader, fragmentShader) {
   gl.deleteProgram(program);
 }
 
-/**
- * Starts the app.
- */
-init();
+function isPowerOf2(value) {
+  return (value & (value - 1)) == 0;
+}
 
+/**
+ * Utils
+ */
 function radToDeg(r) {
   return r * 180 / Math.PI;
 }
