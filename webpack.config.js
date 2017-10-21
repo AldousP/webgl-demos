@@ -22,12 +22,12 @@ module.exports = {
     rules: [
       {
         test: /\.glsl$/,
-        loader: 'webpack-glsl-loader'
+        use: 'webpack-glsl-loader'
       },
       {
         test: [ /\.ts$/ ],
         exclude: /node_modules/,
-        use: [ 'babel-loader' ]
+        use: 'ts-loader'
       },
       {
         test: /\.css$/,

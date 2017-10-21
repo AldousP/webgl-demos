@@ -70,10 +70,10 @@ function programInit () {
 
   gl.bindBuffer(gl.ARRAY_BUFFER, texcoordsBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-      0.0,  0.0,
-      1.0,  0.0,
-      1.0,  1.0,
-      0.0,  1.0
+      0, 0,
+      0, 1,
+      1, 0,
+      1, 1
     ]),
     gl.STATIC_DRAW);
 
@@ -188,9 +188,6 @@ function renderLoop () {
 
   gl.uniformMatrix4fv(matrixLocation, false, matrix);
   gl.drawArrays(gl.TRIANGLE_STRIP, offset, 4);
-
-  // rotation[0] += degToRad(10 * delta);
-  // rotation[2] += degToRad(10 * delta);
 
   window.requestAnimationFrame(renderLoop);
 }
