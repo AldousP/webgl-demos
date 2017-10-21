@@ -1,8 +1,8 @@
-import { ComponentType } from "./entity";
+import { ComponentType } from "./component-type";
 
 /**
  * Components are maps of data contained by an { @link Entity}
  */
-export class Component {
+export default class Component {
   type: ComponentType;
 }

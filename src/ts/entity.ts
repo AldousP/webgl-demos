@@ -1,5 +1,5 @@
 import { mat4 } from 'gl-matrix/src/gl-matrix';
-import { Component } from "./component";
+import Component from "./component";
 
 /**
  * Entities are containers for {@link Component} definitions.
