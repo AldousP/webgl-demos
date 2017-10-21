@@ -3,13 +3,12 @@ import './lib/matrixUtils';
 import './lib/glUtils';
 import m4 from './lib/m4';
 
-var vertShader = require('./glsl/vertex/example_2.glsl');
-var fragShader = require('./glsl/fragment/example_2.glsl');
+var vertShader = require('./glsl/vertex/example_3.glsl');
+var fragShader = require('./glsl/fragment/example_3.glsl');
 var imageData = require('static/teapot.jpg');
 
 var gl;
 var program;
-
 var positionLocation;
 var texcoordLocation;
 var matrixLocation;
@@ -35,11 +34,9 @@ var colors = [
 var translation = [0, 0, 0];
 var rotation = [0, 0, 0];
 var scale = [2, 2, 2];
-
 var last = new Date().getTime();
 
-
-function init () {
+(function init () {
   var canvas = document.getElementById('webgl_example');
   gl = canvas.getContext('webgl');
 
@@ -48,10 +45,7 @@ function init () {
     return;
   }
   compileShaders();
-}
-
-init();
-
+})();
 
 /**
  * Init shader attributes once program has loaded.
@@ -142,7 +136,6 @@ function compileShaders () {
  */
 var delta;
 
-
 function renderLoop () {
   var current = new Date().getTime();
   delta = (current - last) / 1000;
@@ -199,7 +192,6 @@ function renderLoop () {
   // rotation[0] += degToRad(10 * delta);
   // rotation[2] += degToRad(10 * delta);
 
-
   window.requestAnimationFrame(renderLoop);
 }
 
@@ -226,14 +218,7 @@ function createShader(gl, type, source) {
   gl.deleteShader(shader);
 }
 
-/**
- * Creates the program context by linking the provided shaders.
- *
- * @param gl
- * @param vertexShader
- * @param fragmentShader
- * @returns A linked shader program.
- */
+
 function createProgram(gl, vertexShader, fragmentShader) {
   var program = gl.createProgram();
   gl.attachShader(program, vertexShader);

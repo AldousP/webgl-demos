@@ -1224,9 +1224,13 @@ var $M = Matrix.create;
 var $L = Line.create;
 var $P = Plane.create;
 
-export { Matrix, Line, Plane, Vector }
 
 window.Matrix = Matrix;
 window.Vector = Vector;
 window.Plane = Plane;
-window.Line= Line;
+window.Line = Line;
+
+window.$V = Vector.create;
+window.$M = Matrix.create;
+window.$L = Line.create;
+window.$P = Plane.create;
