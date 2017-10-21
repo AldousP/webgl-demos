@@ -2,8 +2,20 @@
 WebGL examples built with Webpack & Typescript.
 
 ```
-yarn start // Runs the live-reload dev server at localhost:8000
+// Runs the live-reload dev server at localhost:8080
+yarn start 
 ```
 ```
-yarn build // Creates an app bundle and index.html for deployment
+// Creates an app bundle and index.html for deployment
+yarn build
+``` 
+
+```
+// Compiles test.ts with tsc and executes AVA tests
+yarn test
+``` 
+
+```
+// Runs tsc watch and AVA watch in parallel to reload changes
+yarn test-dev
 ``` 
