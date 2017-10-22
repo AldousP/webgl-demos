@@ -1,10 +1,14 @@
 import { Entity } from '../ts/entity';
+import { degToRad, radToDeg } from "../ts/math";
 
 let window = require('window');
 let lastFrame: number = new Date().getTime();
 let delta: number;
 let entities: Array<Entity> = [];
 let testEntity: Entity;
+
+let vertShader: string = require('./glsl/vertex/example_3.glsl');
+let fragShader: string = require('./glsl/fragment/example_3.glsl');
 
 function setup() {
   testEntity = new Entity();
@@ -23,15 +27,8 @@ function drawEntity(entity) {
 }
 
 render();
-
-
-// import './lib/sylvester';
-// import './lib/matrixUtils';
-// import './lib/glUtils';
-// import m4 from './lib/m4';
 //
-// var vertShader = require('./glsl/vertex/example_3.glsl');
-// var fragShader = require('./glsl/fragment/example_3.glsl');
+
 // var imageData = require('static/teapot.jpg');
 //
 // var gl;
@@ -265,12 +262,8 @@ render();
 // /**
 //  * Utils
 //  */
-// function radToDeg(r) {
-//   return r * 180 / Math.PI;
-// }
-//
-// function degToRad(d) {
-//   return d * Math.PI / 180;
-// }
-//
+
+
+
+
 
