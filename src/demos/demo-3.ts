@@ -1,18 +1,21 @@
 import { Entity } from '../ts/entity';
 
-let entity = new Entity();
-let lastFrame = new Date().getTime();
-let delta;
+let window = require('window');
+let lastFrame: number = new Date().getTime();
+let delta: number;
 let entities: Array<Entity> = [];
+let testEntity: Entity;
 
+function setup() {
+  testEntity = new Entity();
+  entities.push();
+}
 
 function render () {
   let now = new Date().getTime();
   delta = (now - lastFrame) / 1000;
   lastFrame = now;
   window.requestAnimationFrame(render);
-
-  entities.push("test");
 }
 
 function drawEntity(entity) {

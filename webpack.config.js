@@ -12,11 +12,14 @@ module.exports = {
     filename: 'app.js'
   },
   resolve: {
-    extensions: [ '.js', '.ts', '.glsl' ],
+    extensions: ['.js', '.ts', '.glsl'],
     alias: {
-      static: path.join( __dirname, 'static'),
-      app: path.join( __dirname, 'src')
+      static: path.join(__dirname, 'static'),
+      app: path.join(__dirname, 'src')
     }
+  },
+  externals: {
+  "window": "window",
   },
   module: {
     rules: [
