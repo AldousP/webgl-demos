@@ -1,11 +1,14 @@
-import '../lib/sylvester';
-import './lib/matrixUtils';
-import './lib/glUtils';
-import m4 from './lib/m4';
+import 'app/lib/sylvester';
+import 'app/lib/matrixUtils';
+import 'app/lib/glUtils';
+import m4 from 'app/lib/m4';
 
-var vertShader = require('./glsl/vertex/example_2.glsl');
-var fragShader = require('./glsl/fragment/example_2.glsl');
-var imageData = require('static/teapot.jpg');
+let window = require('window');
+let document = window.document;
+
+let vertShader:string = require('app/glsl/vertex/example_2.glsl');
+let fragShader:string = require('app/glsl/fragment/example_2.glsl');
+let imageData = require('static/teapot.jpg');
 
 var gl;
 var program;
@@ -79,14 +82,14 @@ function renderLoop () {
   gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset);
 
   // Color data buffer
-  gl.enableVertexAttribArray(colorLocation);
-  gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-  var size = 4;          // 4 components per iteration
-  var type = gl.FLOAT;   // the data is 32bit floats
-  var normalize = false; // don't normalize the data
-  var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
-  var offset = 0;        // start at the beginning of the buffer
-  gl.vertexAttribPointer(colorLocation, size, type, normalize, stride, offset);
+  // gl.enableVertexAttribArray(colorLocation);
+  // gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+  // var size = 4;          // 4 components per iteration
+  // var type = gl.FLOAT;   // the data is 32bit floats
+  // var normalize = false; // don't normalize the data
+  // var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
+  // var offset = 0;        // start at the beginning of the buffer
+  // gl.vertexAttribPointer(colorLocation, size, type, normalize, stride, offset);
 
   // Texture data buffer
   gl.enableVertexAttribArray(texcoordLocation);
@@ -108,11 +111,10 @@ function renderLoop () {
   matrix = m4.scale(matrix, scale[0], scale[1], scale[2]);
 
   gl.uniformMatrix4fv(matrixLocation, false, matrix);
-
   gl.drawArrays(gl.TRIANGLE_STRIP, offset, 4);
 
   rotation[0] += degToRad(10 * delta);
-  // rotation[2] += degToRad(10 * delta);
+  rotation[2] += degToRad(10 * delta);
   window.requestAnimationFrame(renderLoop);
 }
 
@@ -126,8 +128,8 @@ function isPowerOf2 (value) {
 function programInit () {
   positionLocation = gl.getAttribLocation(program, 'a_vertexPosition');
   texcoordLocation = gl.getAttribLocation(program, 'a_texcoord');
-  matrixLocation = gl.getUniformLocation(program, 'u_matrix');
   colorLocation = gl.getAttribLocation(program, 'a_vertexColor');
+  matrixLocation = gl.getUniformLocation(program, 'u_matrix');
 
   positionBuffer = gl.createBuffer();
   matrixBuffer = gl.createBuffer();
@@ -151,13 +153,12 @@ function programInit () {
     gl.STATIC_DRAW);
 
 
-  var texture = gl.createTexture();
+  let texture = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
-
   // Asynchronously load an image
-  var image = new Image();
-  // image.data-src = imageData;
+  let image = new Image();
+
   image.src = imageData;
   image.addEventListener('load', function () {
     // Now that the image has loaded make copy it to the texture.
