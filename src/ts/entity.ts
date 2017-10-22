@@ -12,5 +12,3 @@ export class Entity {
   transform: mat4 = mat4.create();
   components: Map<string, Component>;
 }
-
-

@@ -1,4 +1,4 @@
-import './lib/sylvester';
+import '../lib/sylvester';
 import './lib/matrixUtils';
 import './lib/glUtils';
 import m4 from './lib/m4';

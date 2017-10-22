@@ -1,8 +1,25 @@
-import {Entity} from './ts/entity';
+import { Entity } from '../ts/entity';
 
 let entity = new Entity();
+let lastFrame = new Date().getTime();
+let delta;
+let entities: Array<Entity> = [];
 
-console.log(entity);
+
+function render () {
+  let now = new Date().getTime();
+  delta = (now - lastFrame) / 1000;
+  lastFrame = now;
+  window.requestAnimationFrame(render);
+
+  entities.push("test");
+}
+
+function drawEntity(entity) {
+
+}
+
+render();
 
 
 // import './lib/sylvester';
