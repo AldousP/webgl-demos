@@ -1,6 +1,6 @@
 import { Entity } from '../ts/entity';
 import { degToRad, radToDeg, isPowerOf2 } from "../ts/math";
-import { mat4, vec4 } from "gl-matrix";
+import { mat4, vec4, vec3 } from "gl-matrix";
 
 let window = require('window');
 
@@ -22,23 +22,33 @@ let positionLocation: string; // References to the shader's attributes
 let transformLocation: string;
 let positionBuffer;
 
-let imageData = require('static/teapot.jpg');
 let entities: Array<Entity> = [];
-let testEntity: Entity;
 
 /**
  * Sets up the scene data | Self executing.
  */
 (function setup() {
-  testEntity = new Entity();
-  testEntity.mesh = [
+  let entityA = new Entity();
+  entityA.mesh = [
     -.25, .25,
     -.25, -.25,
     .25, .25,
     .25, -.25
   ];
 
-  entities.push(testEntity);
+  let entityB = new Entity();
+  entityB.transform = mat4.create();
+  mat4.translate(entityB.transform, entityB.transform, vec3.fromValues(-.55, -.35, 0));
+
+  entityB.mesh = [
+    -.115, .115,
+    -.115, -.115,
+    .115, .115,
+    .115, -.115
+  ];
+
+  entities.push(entityA);
+  entities.push(entityB);
   shaderProgram = compileShaders();
   setupShaderData();
   render();
@@ -51,7 +61,12 @@ function render () {
   let now = new Date().getTime();
   delta = (now - lastFrame) / 1000;
 
-  entities.forEach((entity) => {
+  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+  let aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+
+  entities.forEach((entity, index) => {
     drawEntity(entity);
   });
 
