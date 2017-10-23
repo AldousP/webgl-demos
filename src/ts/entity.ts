@@ -1,5 +1,7 @@
-import { mat4 } from 'gl-matrix/src/gl-matrix';
+import
+{ mat4 } from 'gl-matrix/src/gl-matrix';
 import Component from "./component";
+import { Mesh } from "./mesh";
 
 /**
  * Entities are containers for {@link Component} definitions.
@@ -8,7 +10,7 @@ import Component from "./component";
 export class Entity {
   ID: number;
   name: string;
-  mesh: Array<number>;
+  mesh: Mesh;
   transform: mat4 = mat4.create();
   components: Map<string, Component>;
 }

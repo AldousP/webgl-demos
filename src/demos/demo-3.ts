@@ -1,6 +1,10 @@
 import { Entity } from '../ts/entity';
 import { degToRad, radToDeg, isPowerOf2 } from "../ts/math";
 import { mat4, vec4, vec3 } from "gl-matrix";
+import { Mesh, MeshType, VertexLength } from "../ts/mesh";
+
+let twgl = require('twgl.js');
+let primitives = twgl.primitives;
 
 let window = require('window');
 window.mat4 = mat4;
@@ -25,6 +29,7 @@ let transformLocation: string;
 let positionBuffer;
 
 let entities: Array<Entity> = [];
+let cubeModel = primitives.createCubeVertices(1.5);
 
 let cameraAngleRadians = degToRad(0);
 let fieldOfViewRadians = degToRad(60);
@@ -37,7 +42,7 @@ let viewMatrix = mat4.create();
 let projectionMatrix = mat4.create();
 let viewProjectionMatrix = mat4.create();
 
-let cameraPosition = vec3.fromValues(0, 0, -1);
+let cameraPosition = vec3.fromValues(0, 0, -5);
 let target = vec3.fromValues(0, 0, 0);
 let up = vec3.fromValues(0, 1, 0);
 
@@ -57,12 +62,15 @@ ySlider.onchange = (event) => {
  */
 (function setup() {
   let entityA = new Entity();
-  entityA.mesh = [
-    -.25, .25, 0,
-    -.25, -.25, 0,
-    .25, .25, 0,
-    .25, -.25, 0
-  ];
+
+  entityA.mesh = new Mesh();
+
+  console.log(cubeModel);
+  entityA.mesh.data = cubeModel.position;
+
+  entityA.mesh.meshType = MeshType.TRIANGLES;
+  entityA.mesh.vertexLength = VertexLength.THREE;
+
 
   let entityB = new Entity();
   entityB.transform = mat4.create();
@@ -72,20 +80,26 @@ ySlider.onchange = (event) => {
   mat4.rotateY(entityB.transform, entityB.transform, Math.PI / 8);
   mat4.rotateZ(entityB.transform, entityB.transform, Math.PI / 16);
 
-  entityB.mesh = [
+  entityB.mesh = new Mesh();
+  entityB.mesh.data = [
     -.115, .115, 0,
     -.115, -.115, 0,
     .115, .115, 0,
     .115, -.115, 0
   ];
 
+  entityB.mesh.meshType = MeshType.TRIANGLES_STRIP;
+  entityB.mesh.vertexLength = VertexLength.THREE;
+
+
   entities.push(entityA);
-  entities.push(entityB);
+  // entities.push(entityB);
   shaderProgram = compileShaders();
   setupShaderData();
   render();
 })();
 
+// console.log(primitives);
 
 function render () {
   let now = new Date().getTime();
@@ -188,18 +202,18 @@ function drawEntity(entity: Entity) {
   gl.useProgram(shaderProgram);
 
   setShaderTransformData(entity.transform);
-  setShaderPositionData(entity.mesh);
+  setShaderPositionData(entity.mesh.data);
 
   gl.enableVertexAttribArray(positionLocation);
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-  let size = 3;          // 2 components per iteration
+  let size = 3;          // 3 components per iteration
   let type = gl.FLOAT;   // the data is 32bit floats
   let normalize = false; // don't normalize the data
   let stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
   let offset = 0;        // start at the beginning of the buffer
 
   gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset);
-  gl.drawArrays(gl.TRIANGLE_STRIP, offset, 4);
+  gl.drawArrays(gl.TRIANGLE_STRIP, offset, 24);
 }
 

@@ -6,8 +6,8 @@ import m4 from 'app/lib/m4';
 let window = require('window');
 let document = window.document;
 
-let vertShader:string = require('app/glsl/vertex/example_2.glsl');
-let fragShader:string = require('app/glsl/fragment/example_2.glsl');
+let vertShader= require('app/glsl/vertex/example_2.glsl');
+let fragShader = require('app/glsl/fragment/example_2.glsl');
 let imageData = require('static/teapot.jpg');
 
 var gl;

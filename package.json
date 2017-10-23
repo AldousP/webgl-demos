@@ -30,6 +30,7 @@
     "webpack-glsl-loader": "^1.0.1"
   },
   "dependencies": {
+    "twgl.js": "^3.8.0",
     "typedoc": "^0.9.0",
     "typescript": "^2.5.3"
   },
