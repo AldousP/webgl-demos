@@ -3,6 +3,8 @@ import { degToRad, radToDeg, isPowerOf2 } from "../ts/math";
 import { mat4, vec4, vec3 } from "gl-matrix";
 
 let window = require('window');
+window.mat4 = mat4;
+
 
 let lastFrame: number = new Date().getTime();
 let delta: number;
@@ -24,27 +26,57 @@ let positionBuffer;
 
 let entities: Array<Entity> = [];
 
+let cameraAngleRadians = degToRad(0);
+let fieldOfViewRadians = degToRad(60);
+
+/**
+ * Call to start the render loop.
+ */
+let cameraMatrix = mat4.create();
+let viewMatrix = mat4.create();
+let projectionMatrix = mat4.create();
+let viewProjectionMatrix = mat4.create();
+
+let cameraPosition = vec3.fromValues(0, 0, -1);
+let target = vec3.fromValues(0, 0, 0);
+let up = vec3.fromValues(0, 1, 0);
+
+let aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+let camNear = 1;
+let camFar = 2000;
+let shaderTransform = mat4.create();
+
+let ySlider = document.getElementById('y-slider');
+
+ySlider.onchange = (event) => {
+  target = vec3.fromValues(0, event.target.value, 0);
+};
+
 /**
  * Sets up the scene data | Self executing.
  */
 (function setup() {
   let entityA = new Entity();
   entityA.mesh = [
-    -.25, .25,
-    -.25, -.25,
-    .25, .25,
-    .25, -.25
+    -.25, .25, 0,
+    -.25, -.25, 0,
+    .25, .25, 0,
+    .25, -.25, 0
   ];
 
   let entityB = new Entity();
   entityB.transform = mat4.create();
   mat4.translate(entityB.transform, entityB.transform, vec3.fromValues(-.55, -.35, 0));
 
+  mat4.rotateX(entityB.transform, entityB.transform, Math.PI / 3);
+  mat4.rotateY(entityB.transform, entityB.transform, Math.PI / 8);
+  mat4.rotateZ(entityB.transform, entityB.transform, Math.PI / 16);
+
   entityB.mesh = [
-    -.115, .115,
-    -.115, -.115,
-    .115, .115,
-    .115, -.115
+    -.115, .115, 0,
+    -.115, -.115, 0,
+    .115, .115, 0,
+    .115, -.115, 0
   ];
 
   entities.push(entityA);
@@ -54,9 +86,7 @@ let entities: Array<Entity> = [];
   render();
 })();
 
-/**
- * Call to start the render loop.
- */
+
 function render () {
   let now = new Date().getTime();
   delta = (now - lastFrame) / 1000;
@@ -64,7 +94,13 @@ function render () {
   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-  let aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+  aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+
+  mat4.identity(projectionMatrix);
+  mat4.perspective(projectionMatrix, fieldOfViewRadians, aspect, 1, 200);
+  mat4.lookAt(cameraMatrix, cameraPosition, target, up);
+  mat4.invert(viewMatrix, cameraMatrix);
+  mat4.multiply(viewProjectionMatrix, projectionMatrix, viewMatrix);
 
   entities.forEach((entity, index) => {
     drawEntity(entity);
@@ -107,7 +143,6 @@ function createShader(type, source) {
   gl.compileShader(shader);
   let success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
   if (success) {
-    // console.log(shader);
     return shader;
   }
 
@@ -139,7 +174,8 @@ function setShaderPositionData(position: Array<number>) {
  * @param {"gl-matrix".mat4} transform
  */
 function setShaderTransformData(transform: mat4) {
-  gl.uniformMatrix4fv(transformLocation, false, transform);
+  mat4.multiply(shaderTransform, viewProjectionMatrix, transform);
+  gl.uniformMatrix4fv(transformLocation, false, shaderTransform);
 }
 
 /**
@@ -156,7 +192,8 @@ function drawEntity(entity: Entity) {
 
   gl.enableVertexAttribArray(positionLocation);
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-  let size = 2;          // 2 components per iteration
+
+  let size = 3;          // 2 components per iteration
   let type = gl.FLOAT;   // the data is 32bit floats
   let normalize = false; // don't normalize the data
   let stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
