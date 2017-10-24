@@ -4,21 +4,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 </head>
-<body class="moderno">
-<div class="letterhead">
-  <div class="letterhead-content">
-    <div>WebGL Demos</div>
-    <i id="mobile-nav-toggle" class="fa fa-compass" aria-hidden="true"></i>
+<body>
+
+<main class="container-fluid app">
+  <div class="row header">
+    <div class="col-xs-3">WebGL Demos</div>
   </div>
-</div>
-<div class="content-container">
-  <div class="row">
-    <div class="canvas-container">
-      <canvas id="webgl_example" width="640" height="360">Sorry, your browser does not support the canvas element.
-      </canvas>
-    </div>
-    <input type="range" min="-3.14" max="3.14" id="y-slider" style="width: 128px; margin: auto" step=".01">
+  <div class="row app-content">
+    <div id="app-root" class="col-xs-12 mx-auto"></div>
   </div>
-</div>
+</main>
 </body>
 </html>

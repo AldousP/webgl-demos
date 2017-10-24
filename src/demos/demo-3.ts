@@ -9,12 +9,11 @@ let primitives = twgl.primitives;
 let window = require('window');
 window.mat4 = mat4;
 
-
 let lastFrame: number = new Date().getTime();
 let delta: number;
 
 let document = window.document;
-let gl = document.getElementById('webgl_example').getContext('webgl');
+let gl = document.getElementById('canvas').getContext('webgl');
 
 if (!gl) {
   console.error('No WebGL context available.');
@@ -51,12 +50,6 @@ let camNear = 1;
 let camFar = 2000;
 let shaderTransform = mat4.create();
 
-let ySlider = document.getElementById('y-slider');
-
-ySlider.onchange = (event) => {
-  target = vec3.fromValues(0, event.target.value, 0);
-};
-
 /**
  * Sets up the scene data | Self executing.
  */
@@ -64,13 +57,9 @@ ySlider.onchange = (event) => {
   let entityA = new Entity();
 
   entityA.mesh = new Mesh();
-
-  console.log(cubeModel);
   entityA.mesh.data = cubeModel.position;
-
   entityA.mesh.meshType = MeshType.TRIANGLES;
   entityA.mesh.vertexLength = VertexLength.THREE;
-
 
   let entityB = new Entity();
   entityB.transform = mat4.create();
@@ -81,19 +70,12 @@ ySlider.onchange = (event) => {
   mat4.rotateZ(entityB.transform, entityB.transform, Math.PI / 16);
 
   entityB.mesh = new Mesh();
-  entityB.mesh.data = [
-    -.115, .115, 0,
-    -.115, -.115, 0,
-    .115, .115, 0,
-    .115, -.115, 0
-  ];
-
-  entityB.mesh.meshType = MeshType.TRIANGLES_STRIP;
+  entityB.mesh.data = cubeModel.position;
+  entityB.mesh.meshType = MeshType.TRIANGLES;
   entityB.mesh.vertexLength = VertexLength.THREE;
 
-
   entities.push(entityA);
-  // entities.push(entityB);
+  entities.push(entityB);
   shaderProgram = compileShaders();
   setupShaderData();
   render();

@@ -12,7 +12,7 @@ module.exports = {
     filename: 'app.js'
   },
   resolve: {
-    extensions: ['.js', '.ts', '.glsl'],
+    extensions: ['.js', '.ts', '.tsx', '.glsl'],
     alias: {
       static: path.join(__dirname, 'static'),
       app: path.join(__dirname, 'src')
@@ -28,9 +28,34 @@ module.exports = {
         use: 'webpack-glsl-loader'
       },
       {
-        test: [ /\.ts$/ ],
+        test: [ /\.ts$/, /\.tsx$/ ],
         exclude: /node_modules/,
         use: 'ts-loader'
+      },
+      {
+        enforce: "pre",
+        test: /\.js$/,
+        loader: "source-map-loader"
+      },
+      {
+        test: /\.scss$/,
+        use: [
+          {
+            loader: 'style-loader'
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true
+            }
+          },
+          {
+            loader: 'fast-sass-loader',
+            options: {
+              sourceMap: true
+            }
+          }
+        ]
       },
       {
         test: /\.css$/,

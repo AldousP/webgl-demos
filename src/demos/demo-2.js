@@ -45,7 +45,7 @@ var last = new Date().getTime();
  * App start code.
  */
 function init () {
-  var canvas = document.getElementById('webgl_example');
+  var canvas = document.getElementById('canvas');
   gl = canvas.getContext('webgl');
 
   if (!gl) {
