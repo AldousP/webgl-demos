@@ -94,7 +94,7 @@ function render () {
 
   mat4.identity(projectionMatrix);
   mat4.perspective(projectionMatrix, fieldOfViewRadians, aspect, 1, 200);
-  mat4.lookAt(cameraMatrix, cameraPosition, target, up);
+  mat4.lookAt(cameraMatrix, cameraPosition, this.target, up);
   mat4.invert(viewMatrix, cameraMatrix);
   mat4.multiply(viewProjectionMatrix, projectionMatrix, viewMatrix);
 

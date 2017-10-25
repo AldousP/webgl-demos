@@ -1,15 +1,18 @@
 import * as React from 'react';
+import ValueInput from "./value-input";
 
 let classNames = require('classnames');
+import styled from 'styled-components';
+import Scene from "./scene";
 
 export interface ToolPaneProps {
-  className: string
+  className: string,
+  scene?: Scene;
 }
 
 export interface ToolPaneState {
   sliderValue: number
 }
-
 
 export interface StateProps {}
 
@@ -28,17 +31,24 @@ class ToolPane extends React.Component<ToolPaneProps, ToolPaneState> {
   };
 
   render() {
+    let values = Object.keys(this.props.scene.appState);
+
     return (
-      <div className={ classNames('col pane', this.props.className) }>
-        <h4>Camera</h4>
-        <div >
-          <label>X</label>
-          <input type="range"
-                 min={ -3.14}
-                 max={ 3.14 }
-                 value={ this.state.sliderValue }
-                 onChange={ this.sliderChange } />
-        </div>
+      <div className={ classNames('col pane tool-pane', this.props.className) }>
+        {
+          values.map( ( value ) => {
+            return <ValueInput key={ value }
+                               value_name={ value }
+                               min={ -16 }
+                               max={ 16 }
+                               value={ 0 }
+                               onChange={ ( val ) => {
+                                 this.props.scene.updateAppState({
+                                   [value]: val
+                                 })
+                               }}/>
+          })
+        }
       </div>
     );
   }

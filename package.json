@@ -13,7 +13,9 @@
     "test-dev": "concurrently \"tsc -w test/*.ts --lib es2015 \" \"ava --watch\""
   },
   "devDependencies": {
+    "@types/classnames": "^2.2.3",
     "@types/gl-matrix": "^2.3.2",
+    "@types/immutability-helper": "^2.0.15",
     "@types/node": "^8.0.46",
     "@types/react": "^16.0.18",
     "@types/react-dom": "^16.0.2",
@@ -35,12 +37,12 @@
     "webpack-glsl-loader": "^1.0.1"
   },
   "dependencies": {
-    "@types/classnames": "^2.2.3",
     "bootstrap": "^4.0.0-beta.2",
     "classnames": "^2.2.5",
+    "immutability-helper": "^2.4.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
-    "styled-components": "^2.2.1",
+    "styled-components": "^2.2.2",
     "twgl.js": "^3.8.0",
     "typedoc": "^0.9.0",
     "typescript": "^2.5.3"

@@ -21,16 +21,49 @@ body {
     padding: 16px;
   }
 
+
   .pane {
-    padding: 8px;
-    flex-wrap: wrap;
     color: white;
     background-color: #28292e;
     border-radius: 3px;
     box-shadow: 0 0 6px 1px rgba(0, 0, 0, 0.12);
   }
+
+  .tool-pane {
+    padding: 8px;
+
+    .value-input {
+      padding: 8px;
+      margin: 4px;
+      min-width: 256px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #4b4b4b;
+      border-radius: 1.8px;
+      box-shadow: 0 0 6px 1px rgba(0, 0, 0, 0.12);
+
+      .label {
+        font-style: italic;
+      }
+
+      .input-value {
+        font-size: 12px;
+        padding: 2px 2px 2px 4px;
+        width: 38px;
+        text-align: right;
+        background-color: rgba(255, 255, 255, 0.22);
+        border: thin solid rgba(255, 255, 255, 0.51);
+        color: white;
+        border-radius: 2.6px;
+      }
+    }
+  }
+
 }
 
 canvas {
   background-color: black;
 }
+
+
