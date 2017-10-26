@@ -34,7 +34,7 @@ class ToolPane extends React.Component<ToolPaneProps, ToolPaneState> {
     let values = Object.keys(this.props.scene.appState);
 
     return (
-      <div className={ classNames('col pane tool-pane', this.props.className) }>
+      <div className={ classNames('col tool-pane', this.props.className) }>
         {
           values.map( ( value ) => {
             return <ValueInput key={ value }

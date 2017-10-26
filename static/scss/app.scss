@@ -31,12 +31,15 @@ body {
 
   .tool-pane {
     padding: 8px;
+    max-width: 412px;
 
     .value-input {
       padding: 8px;
       margin: 4px;
-      min-width: 256px;
-      display: flex;
+      width: 100%;
+      //max-width: 312px;
+      display: inline-flex;
+      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
       background-color: #4b4b4b;
@@ -45,9 +48,13 @@ body {
 
       .label {
         font-style: italic;
+        width: 72px;
+        overflow: hidden;
       }
 
       .input-value {
+        margin-left: 4px;
+        margin-right: 4px;
         font-size: 12px;
         padding: 2px 2px 2px 4px;
         width: 38px;
@@ -58,6 +65,10 @@ body {
         border-radius: 2.6px;
       }
     }
+  }
+
+  .viewport {
+    padding: 0;
   }
 
 }

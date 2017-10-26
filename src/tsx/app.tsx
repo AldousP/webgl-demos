@@ -6,10 +6,8 @@ export interface StateProps {}
 class App extends React.Component<AppProps, {}> {
   render() {
     return (
-      <div className='container-fluid'>
-        <div className='row'>
-          { this.props.children }
-        </div>
+      <div className='row justify-content-center'>
+        { this.props.children }
       </div>
     );
   }

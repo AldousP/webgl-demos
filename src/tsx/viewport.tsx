@@ -3,11 +3,10 @@ import * as React from 'react';
 let classNames = require('classnames');
 
 export interface ViewportProps {
-  className: string,
+  className?: string,
   canvas_ID: string,
-  canvas_w: number,
-  canvas_h: number,
-  mounted?: Function
+  width: number
+  mounted?: Function,
 }
 
 export interface StateProps {
@@ -21,9 +20,16 @@ class Viewport extends React.Component<ViewportProps, StateProps> {
   }
 
   render() {
+    let style = {
+      minWidth: '312px',
+      maxWidth: this.props.width + 'px',
+      maxHeight: ( this.props.width * .5625),
+      width: '100%'
+    };
     return (
-      <div className={ classNames('col pane', this.props.className) }>
-        <canvas id={ this.props.canvas_ID } width={ this.props.canvas_w } height={ this.props.canvas_h }>
+      <div style={ { maxWidth: this.props.width + 'px'} } className={ classNames('col viewport', this.props.className) }>
+        <canvas id={ this.props.canvas_ID }
+                style={ style } >
           Sorry, your browser does not support the canvas element.
         </canvas>
       </div>);
