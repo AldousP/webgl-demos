@@ -1,6 +1,4 @@
-import
-{ mat4 } from 'gl-matrix/src/gl-matrix';
-import Component from "./component";
+import { mat4 } from 'gl-matrix/src/gl-matrix';
 import { Mesh } from "./mesh";
 
 /**
@@ -12,5 +10,4 @@ export class Entity {
   name: string;
   mesh: Mesh;
   transform: mat4 = mat4.create();
-  components: Map<string, Component>;
 }
