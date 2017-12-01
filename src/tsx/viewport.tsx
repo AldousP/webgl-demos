@@ -6,6 +6,7 @@ export interface ViewportProps {
   className?: string,
   canvas_ID: string,
   width: number
+  height: number
   mounted?: Function,
 }
 
@@ -29,6 +30,8 @@ class Viewport extends React.Component<ViewportProps, StateProps> {
     return (
       <div style={ { maxWidth: this.props.width + 'px'} } className={ classNames('col viewport', this.props.className) }>
         <canvas id={ this.props.canvas_ID }
+                width={ this.props.width }
+                height={ this.props.height }
                 style={ style } >
           Sorry, your browser does not support the canvas element.
         </canvas>

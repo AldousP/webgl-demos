@@ -24,6 +24,7 @@ ReactDOM.render(
     <Viewport className="col-xs-12 col-sm-8 order-3 pane"
               canvas_ID={ canvas_ID }
               width={ 712 }
+              height={ 1280 }
               mounted={ () => scene.setup( canvas_ID ) }/>
     <ToolPane className="col-xs-12 order-4 col-sm-4 pane"
               scene={ scene } />

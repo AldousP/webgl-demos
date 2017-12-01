@@ -14,8 +14,6 @@ export interface ToolPaneState {
   sliderValue: number
 }
 
-export interface StateProps {}
-
 class ToolPane extends React.Component<ToolPaneProps, ToolPaneState> {
   constructor (props) {
     super(props);
