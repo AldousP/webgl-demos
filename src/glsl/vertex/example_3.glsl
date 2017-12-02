@@ -1,7 +1,9 @@
-attribute vec4 a_vertexPosition;
-varying lowp vec4 v_color;
+attribute vec4 aVertexPosition;
+attribute vec4 aVertexColor;
+
+varying lowp vec4 vColor;
 
 void main() {
-    gl_Position = a_vertexPosition;
-    v_color = vec4(1, 1, 1, 1);
+    gl_Position = aVertexPosition;
+    vColor = vec4(1, 1, 1, 1) * aVertexColor;
 }
