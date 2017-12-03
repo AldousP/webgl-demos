@@ -11,7 +11,6 @@ import * as ReactDOM from 'react-dom';
 import App from './tsx/app';
 import ToolPane from "./tsx/toolpane";
 import Scene1 from "./tsx/scenes/Scene1";
-import Scene from "./tsx/scene";
 
 import './ts/component-type';
 
@@ -27,6 +26,7 @@ ReactDOM.render(
               height={ 1280 }
               mounted={ () => scene.setup( canvas_ID ) }/>
     <ToolPane className="col-xs-12 order-4 col-sm-4 pane"
+              sceneState={ scene.appState }
               scene={ scene } />
   </App>,
   document.getElementById('app-root')

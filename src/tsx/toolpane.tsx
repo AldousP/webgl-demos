@@ -8,6 +8,7 @@ import Scene from "./scene";
 export interface ToolPaneProps {
   className: string,
   scene?: Scene;
+  sceneState: Object;
 }
 
 export interface ToolPaneState {
@@ -28,6 +29,10 @@ class ToolPane extends React.Component<ToolPaneProps, ToolPaneState> {
     });
   };
 
+  componentWillReceiveProps ( nextProps ) {
+    console.log(nextProps);
+  }
+
   render() {
     let values = Object.keys(this.props.scene.appState);
 
@@ -35,11 +40,22 @@ class ToolPane extends React.Component<ToolPaneProps, ToolPaneState> {
       <div className={ classNames('col tool-pane', this.props.className) }>
         {
           values.map( ( value ) => {
+            let min;
+            let max;
+            let step;
+
+            if (this.props.scene.paneConfig[value]) {
+              min = this.props.scene.paneConfig[value].min;
+              max = this.props.scene.paneConfig[value].max;
+              step = this.props.scene.paneConfig[value].step;
+            }
+
             return <ValueInput key={ value }
                                value_name={ value }
-                               min={ -16 }
-                               max={ 16 }
-                               value={ 0 }
+                               step={ step ? step : .1 }
+                               min={ min || min === 0 ? min : -10 }
+                               max={ max || max === 0 ? max : 10 }
+                               value={ this.props.sceneState[value] }
                                onChange={ ( val ) => {
                                  this.props.scene.updateAppState({
                                    [value]: val

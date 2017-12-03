@@ -12,6 +12,7 @@ export interface ValueInputProps {
   value_name: string,
   min: number,
   max: number,
+  step: number,
   value: number,
   onChange?: Function
 }
@@ -61,7 +62,7 @@ class ValueInput extends React.Component<ValueInputProps, ValueInputState> {
           <input type="range"
                  min={ this.props.min }
                  max={ this.props.max }
-                 step={ .1 }
+                 step={ this.props.step }
                  value={ this.state.value }
                  onChange={ this.sliderChange } />
 
