@@ -26,6 +26,8 @@ export default class Scene3 extends Scene {
     wall: require('static/images/wall.jpg')
   };
 
+  textures;
+
   appState = {
     fieldOfView: 45 * Math.PI / 180,
     aspect: 1.77,
@@ -65,8 +67,8 @@ export default class Scene3 extends Scene {
    * Sets up the scene data | Self executing.
    */
   setup ( canvasID: string ) {
-    this.gl = document.getElementById( canvasID ).getContext('webgl');
-    let gl = this.gl;
+    let gl = document.getElementById( canvasID ).getContext('webgl');
+    this.gl = gl;
 
     this.shaderProgram = this.compileShaders();
     this.programData = {
@@ -84,11 +86,16 @@ export default class Scene3 extends Scene {
       modelViewMatrix: {
         location: gl.getUniformLocation(this.shaderProgram, 'uModelViewMatrix')
       },
+      textureUV: {
+        buffer: gl.createBuffer()
+      },
       indices: {
         // Used to pass index information to gl when using draw elements
         buffer: gl.createBuffer()
       }
     };
+
+    this.textures = {};
 
     const faceColors = [
       [1.0,  1.0,  1.0,  1.0],    // Front face: white
@@ -145,11 +152,48 @@ export default class Scene3 extends Scene {
       -1.0,  1.0, -1.0,
     ];
 
-    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.programData.position.buffer);
-    this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(positions), this.gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.programData.position.buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
-    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.programData.color.buffer);
-    this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(colors), this.gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.programData.color.buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+
+    const textureCoordinates = [
+      // Front
+      0.0,  0.0,
+      1.0,  0.0,
+      1.0,  1.0,
+      0.0,  1.0,
+      // Back
+      0.0,  0.0,
+      1.0,  0.0,
+      1.0,  1.0,
+      0.0,  1.0,
+      // Top
+      0.0,  0.0,
+      1.0,  0.0,
+      1.0,  1.0,
+      0.0,  1.0,
+      // Bottom
+      0.0,  0.0,
+      1.0,  0.0,
+      1.0,  1.0,
+      0.0,  1.0,
+      // Right
+      0.0,  0.0,
+      1.0,  0.0,
+      1.0,  1.0,
+      0.0,  1.0,
+      // Left
+      0.0,  0.0,
+      1.0,  0.0,
+      1.0,  1.0,
+      0.0,  1.0,
+    ];
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.programData.textureUV.buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
+      gl.STATIC_DRAW);
 
     const indices = [
       0,  1,  2,      0,  2,  3,    // front
@@ -168,7 +212,43 @@ export default class Scene3 extends Scene {
 
     this.projectionMatrix = mat4.create();
     this.modelViewMatrix = mat4.create();
-    this.render( this.gl );
+
+    // Setup texture data
+    this.textures.wall = gl.createTexture();
+
+    const image = new Image();
+    image.src = this.assets.wall;
+    image.onload = () => {
+      const level = 0;
+      const internalFormat = gl.RGBA;
+      const srcFormat = gl.RGBA;
+      const srcType = gl.UNSIGNED_BYTE;
+      gl.bindTexture(gl.TEXTURE_2D, this.textures.wall);
+      gl.texImage2D(
+        gl.TEXTURE_2D,
+        level,
+        internalFormat,
+        srcFormat,
+        srcType,
+        image
+      );
+
+      // WebGL1 has different requirements for power of 2 images
+      // vs non power of 2 images so check if the image is a
+      // power of 2 in both dimensions.
+      if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
+        // Yes, it's a power of 2. Generate mips.
+        gl.generateMipmap(gl.TEXTURE_2D);
+      } else {
+        // No, it's not a power of 2. Turn of mips and set
+        // wrapping to clamp to edge
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      }
+    };
+
+    this.render( gl );
   }
 
   render ( gl ) {
@@ -185,9 +265,6 @@ export default class Scene3 extends Scene {
     gl.depthFunc(gl.LEQUAL);            // Near things obscure far things
 
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-    // mat4.identity(this.projectionMatrix);
-
 
     mat4.perspective(
       this.projectionMatrix,
@@ -243,19 +320,11 @@ export default class Scene3 extends Scene {
       gl.enableVertexAttribArray(this.programData.color.location);
     }
 
-    {
-      const vertexCount = 36;
-      const type = gl.UNSIGNED_SHORT;
-      const offset = 0;
-      gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
-    }
-
     gl.useProgram(this.shaderProgram);
     gl.uniformMatrix4fv(
       this.programData.projectionMatrix.location,
       false,
       this.projectionMatrix);
-
     gl.uniformMatrix4fv(
       this.programData.modelViewMatrix.location,
       false,
@@ -263,6 +332,13 @@ export default class Scene3 extends Scene {
 
     // Tell WebGL which indices to use to index the vertices
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.programData.indices.buffer);
+
+    {
+      const vertexCount = 36;
+      const type = gl.UNSIGNED_SHORT;
+      const offset = 0;
+      gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
+    }
 
     this.lastFrame = now;
     window.requestAnimationFrame(() => this.render( gl ) );
