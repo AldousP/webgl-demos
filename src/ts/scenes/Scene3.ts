@@ -76,18 +76,18 @@ export default class Scene3 extends Scene {
         location: gl.getAttribLocation(this.shaderProgram, 'aVertexPosition'),
         buffer: gl.createBuffer()
       },
-      color: {
-        location: gl.getAttribLocation(this.shaderProgram, 'aVertexColor'),
+      textureCoord: {
+        location: gl.getAttribLocation(this.shaderProgram, 'aTextureCoord'),
         buffer: gl.createBuffer()
+      },
+      sampler: {
+        location: gl.getUniformLocation(this.shaderProgram, 'uSampler'),
       },
       projectionMatrix: {
         location: gl.getUniformLocation(this.shaderProgram, 'uProjectionMatrix')
       },
       modelViewMatrix: {
         location: gl.getUniformLocation(this.shaderProgram, 'uModelViewMatrix')
-      },
-      textureUV: {
-        buffer: gl.createBuffer()
       },
       indices: {
         // Used to pass index information to gl when using draw elements
@@ -96,23 +96,6 @@ export default class Scene3 extends Scene {
     };
 
     this.textures = {};
-
-    const faceColors = [
-      [1.0,  1.0,  1.0,  1.0],    // Front face: white
-      [1.0,  0.0,  0.0,  1.0],    // Back face: red
-      [0.0,  1.0,  0.0,  1.0],    // Top face: green
-      [0.0,  0.0,  1.0,  1.0],    // Bottom face: blue
-      [1.0,  1.0,  0.0,  1.0],    // Right face: yellow
-      [1.0,  0.0,  1.0,  1.0],    // Left face: purple
-    ];
-
-    //  Build the colors for each vertex on the cube
-    let colors = [];
-    for (let j = 0; j < faceColors.length; j++) {
-      const c = faceColors[j];
-      // Repeat each color four times for the four vertices of the face
-      colors = colors.concat(c, c, c, c);
-    }
 
     const positions = [
       // Front face
@@ -155,9 +138,6 @@ export default class Scene3 extends Scene {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.programData.position.buffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.programData.color.buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-
     const textureCoordinates = [
       // Front
       0.0,  0.0,
@@ -191,7 +171,7 @@ export default class Scene3 extends Scene {
       0.0,  1.0,
     ];
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.programData.textureUV.buffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.programData.textureCoord.buffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
       gl.STATIC_DRAW);
 
@@ -304,20 +284,14 @@ export default class Scene3 extends Scene {
     }
 
     {
-      const numComponents = 4;
-      const type = gl.FLOAT;
-      const normalize = false;
-      const stride = 0;
-      const offset = 0;
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.programData.color.buffer);
-      gl.vertexAttribPointer(
-        this.programData.color.location,
-        numComponents,
-        type,
-        normalize,
-        stride,
-        offset);
-      gl.enableVertexAttribArray(this.programData.color.location);
+      const num = 2; // every coordinate composed of 2 values
+      const type = gl.FLOAT; // the data in the buffer is 32 bit float
+      const normalize = false; // don't normalize
+      const stride = 0; // how many bytes to get from one set to the next
+      const offset = 0; // how many butes inside the buffer to start from
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.programData.textureCoord.buffer);
+      gl.vertexAttribPointer(this.programData.textureCoord.location, num, type, normalize, stride, offset);
+      gl.enableVertexAttribArray(this.programData.textureCoord.location);
     }
 
     gl.useProgram(this.shaderProgram);
@@ -332,6 +306,9 @@ export default class Scene3 extends Scene {
 
     // Tell WebGL which indices to use to index the vertices
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.programData.indices.buffer);
+
+    // gl.bindTexture(gl.TEXTURE_2D, this.textures.wall);
+    // gl.uniform1i(this.programData.sampler.location, 0);
 
     {
       const vertexCount = 36;
