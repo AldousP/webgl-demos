@@ -10,11 +10,11 @@ import * as ReactDOM from 'react-dom';
 
 import App from './tsx/app';
 import ToolPane from "./tsx/toolpane";
-import Scene1 from "./tsx/scenes/Scene1";
+import Scene from "./tsx/scenes/Scene2";
 
 import './ts/component-type';
 
-let scene: Scene1 = new Scene1();
+let scene: Scene = new Scene();
 
 let canvas_ID = 'app-canvas';
 
