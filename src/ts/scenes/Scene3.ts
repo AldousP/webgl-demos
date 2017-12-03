@@ -22,11 +22,18 @@ export default class Scene3 extends Scene {
   projectionMatrix: mat4;
   modelViewMatrix: mat4;
 
+  assets = {
+    wall: require('static/images/wall.jpg')
+  };
+
   appState = {
     fieldOfView: 45 * Math.PI / 180,
     aspect: 1.77,
     zNear: 0.1,
-    zFar: 100.0
+    zFar: 100.0,
+    camX: 0,
+    camY: 0,
+    camZ: 0
   };
 
   paneConfig = {
@@ -161,13 +168,6 @@ export default class Scene3 extends Scene {
 
     this.projectionMatrix = mat4.create();
     this.modelViewMatrix = mat4.create();
-
-    mat4.translate(
-      this.modelViewMatrix,     // destination matrix
-      this.modelViewMatrix,     // matrix to translate
-      [-0.0, 0.0, -6.0]
-    );  // amount to translate
-
     this.render( this.gl );
   }
 
@@ -186,12 +186,25 @@ export default class Scene3 extends Scene {
 
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+    // mat4.identity(this.projectionMatrix);
+
+
     mat4.perspective(
       this.projectionMatrix,
       this.appState.fieldOfView,
       this.appState.aspect,
       this.appState.zNear,
       this.appState.zFar);
+
+    mat4.translate(
+      this.projectionMatrix,     // destination matrix
+      this.projectionMatrix,     // matrix to translate
+      [
+        -this.appState.camX,
+        -this.appState.camY,
+        this.appState.camZ
+      ]
+    );  // amount to translate
 
     {
       // Indicates the number of values in each element in the buffer
@@ -230,6 +243,13 @@ export default class Scene3 extends Scene {
       gl.enableVertexAttribArray(this.programData.color.location);
     }
 
+    {
+      const vertexCount = 36;
+      const type = gl.UNSIGNED_SHORT;
+      const offset = 0;
+      gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
+    }
+
     gl.useProgram(this.shaderProgram);
     gl.uniformMatrix4fv(
       this.programData.projectionMatrix.location,
@@ -243,13 +263,6 @@ export default class Scene3 extends Scene {
 
     // Tell WebGL which indices to use to index the vertices
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.programData.indices.buffer);
-
-    {
-      const vertexCount = 36;
-      const type = gl.UNSIGNED_SHORT;
-      const offset = 0;
-      gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
-    }
 
     this.lastFrame = now;
     window.requestAnimationFrame(() => this.render( gl ) );
