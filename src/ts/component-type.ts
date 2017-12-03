@@ -1,6 +1,5 @@
 import { mat4 } from "gl-matrix";
 import { Entity } from "./entity";
-import Map from './map';
 
 const ComponentTypes = {
   transform: 'transform',

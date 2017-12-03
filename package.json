@@ -8,9 +8,7 @@
   "scripts": {
     "start": "node_modules/.bin/webpack-dev-server -d",
     "build": "node_modules/.bin/webpack -p --progress --colors",
-    "build-docs": "typedoc --out docs src/ts",
-    "test": "tsc test/*.ts --lib es2015 && ava",
-    "test-dev": "concurrently \"tsc -w test/*.ts --lib es2015 \" \"ava --watch\""
+    "build-docs": "typedoc --out docs src/ts"
   },
   "devDependencies": {
     "@types/classnames": "^2.2.3",
