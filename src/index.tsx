@@ -10,7 +10,7 @@ import * as ReactDOM from 'react-dom';
 
 import App from './tsx/app';
 import ToolPane from "./tsx/toolpane";
-import Scene from "./ts/scenes/Scene3";
+import Scene from "./ts/scenes/Scene4";
 
 import './ts/component-type';
 
