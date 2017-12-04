@@ -29,16 +29,22 @@ export default class Scene3 extends Scene {
   textures;
 
   appState = {
+    brightness: 1,
     fieldOfView: 45 * Math.PI / 180,
-    aspect: 1.77,
+    aspect: 1.6,
     zNear: 0.1,
     zFar: 100.0,
     camX: 0,
     camY: 0,
-    camZ: 0
+    camZ: -6.0
   };
 
   paneConfig = {
+    brightness: {
+      min: 0,
+      max: 1,
+      step: 0.1
+    },
     fieldOfView: {
       min: 0,
       max: 3
@@ -76,12 +82,19 @@ export default class Scene3 extends Scene {
         location: gl.getAttribLocation(this.shaderProgram, 'aVertexPosition'),
         buffer: gl.createBuffer()
       },
+      color: {
+        location: gl.getAttribLocation(this.shaderProgram, 'aVertexColor'),
+        buffer: gl.createBuffer()
+      },
       textureCoord: {
         location: gl.getAttribLocation(this.shaderProgram, 'aTextureCoord'),
         buffer: gl.createBuffer()
       },
       sampler: {
-        location: gl.getUniformLocation(this.shaderProgram, 'uSampler'),
+        location: gl.getUniformLocation(this.shaderProgram, 'uSampler')
+      },
+      brightness: {
+        location: gl.getUniformLocation(this.shaderProgram, 'uBrightness')
       },
       projectionMatrix: {
         location: gl.getUniformLocation(this.shaderProgram, 'uProjectionMatrix')
@@ -135,8 +148,22 @@ export default class Scene3 extends Scene {
       -1.0,  1.0, -1.0,
     ];
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.programData.position.buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+    const faceColors = [
+      [1.0,  1.0,  1.0,  1.0],    // Front face: white
+      [1.0,  0.0,  0.0,  1.0],    // Back face: red
+      [0.0,  1.0,  0.0,  1.0],    // Top face: green
+      [0.0,  0.0,  1.0,  1.0],    // Bottom face: blue
+      [1.0,  1.0,  0.0,  1.0],    // Right face: yellow
+      [1.0,  0.0,  1.0,  1.0],    // Left face: purple
+    ];
+
+    //  Build the colors for each vertex on the cube
+    let colors = [];
+    for (let j = 0; j < faceColors.length; j++) {
+      const c = faceColors[j];
+      // Repeat each color four times for the four vertices of the face
+      colors = colors.concat(c, c, c, c);
+    }
 
     const textureCoordinates = [
       // Front
@@ -171,10 +198,6 @@ export default class Scene3 extends Scene {
       0.0,  1.0,
     ];
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.programData.textureCoord.buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
-      gl.STATIC_DRAW);
-
     const indices = [
       0,  1,  2,      0,  2,  3,    // front
       4,  5,  6,      4,  6,  7,    // back
@@ -184,11 +207,17 @@ export default class Scene3 extends Scene {
       20, 21, 22,     20, 22, 23,   // left
     ];
 
-    // Now send the element array to GL
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.programData.position.buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.programData.color.buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.programData.textureCoord.buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates), gl.STATIC_DRAW);
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.programData.indices.buffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
-      new Uint16Array(indices), gl.STATIC_DRAW);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
 
     this.projectionMatrix = mat4.create();
     this.modelViewMatrix = mat4.create();
@@ -226,9 +255,9 @@ export default class Scene3 extends Scene {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
       }
-    };
 
-    this.render( gl );
+      this.render( gl );
+    };
   }
 
   render ( gl ) {
@@ -236,14 +265,11 @@ export default class Scene3 extends Scene {
     this.delta = (now - this.lastFrame) / 1000;
 
     this.updateScene( this.delta );
-
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-
     gl.clearColor(0.0, 0.0, 0.0, 1.0);  // Clear to black, fully opaque
     gl.clearDepth(1.0);                 // Clear everything
     gl.enable(gl.DEPTH_TEST);           // Enable depth testing
     gl.depthFunc(gl.LEQUAL);            // Near things obscure far things
-
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     mat4.perspective(
@@ -294,6 +320,24 @@ export default class Scene3 extends Scene {
       gl.enableVertexAttribArray(this.programData.textureCoord.location);
     }
 
+    {
+      const numComponents = 4;
+      const type = gl.FLOAT;
+      const normalize = false;
+      const stride = 0;
+      const offset = 0;
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.programData.color.buffer);
+      // console.log(this.programData.color.location);
+      gl.vertexAttribPointer(
+        this.programData.color.location,
+        numComponents,
+        type,
+        normalize,
+        stride,
+        offset);
+      gl.enableVertexAttribArray(this.programData.color.location);
+    }
+
     gl.useProgram(this.shaderProgram);
     gl.uniformMatrix4fv(
       this.programData.projectionMatrix.location,
@@ -304,11 +348,12 @@ export default class Scene3 extends Scene {
       false,
       this.modelViewMatrix);
 
+    gl.uniform1f(this.programData.brightness.location, this.appState.brightness);
+
     // Tell WebGL which indices to use to index the vertices
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.programData.indices.buffer);
 
-    // gl.bindTexture(gl.TEXTURE_2D, this.textures.wall);
-    // gl.uniform1i(this.programData.sampler.location, 0);
+    gl.uniform1i(this.programData.sampler.location, 0);
 
     {
       const vertexCount = 36;

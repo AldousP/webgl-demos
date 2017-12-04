@@ -15,7 +15,6 @@ import Scene from "./ts/scenes/Scene3";
 import './ts/component-type';
 
 let scene: Scene = new Scene();
-
 let canvas_ID = 'app-canvas';
 
 ReactDOM.render(
