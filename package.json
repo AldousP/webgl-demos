@@ -35,6 +35,8 @@
     "webpack-glsl-loader": "^1.0.1"
   },
   "dependencies": {
+    "@types/bezier-easing": "^2.0.0",
+    "bezier-easing": "^2.0.3",
     "bootstrap": "^4.0.0-beta.2",
     "classnames": "^2.2.5",
     "immutability-helper": "^2.4.0",

@@ -3,7 +3,7 @@ import ValueInput from "./value-input";
 
 let classNames = require('classnames');
 import styled from 'styled-components';
-import Scene from "./scene";
+import Scene from "../ts/scene";
 
 export interface ToolPaneProps {
   className: string,

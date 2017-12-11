@@ -31,3 +31,4 @@ export default class Scene {
     Object.keys(data).forEach(key => this.appState[key] = Number.parseFloat(data[key]));
   }
 }
+

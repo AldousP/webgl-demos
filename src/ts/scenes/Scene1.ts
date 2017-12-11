@@ -1,4 +1,4 @@
-import Scene from "../../tsx/scene";
+import Scene from "../scene";
 import { Entity } from 'app/ts/entity';
 import { degToRad, radToDeg, isPowerOf2 } from 'app/ts/math';
 import { mat4, vec4, vec3 } from 'gl-matrix';

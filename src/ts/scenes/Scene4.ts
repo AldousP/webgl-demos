@@ -1,8 +1,10 @@
-import Scene from "../../tsx/scene";
-import { Entity } from 'app/ts/entity';
-import { degToRad, radToDeg, isPowerOf2 } from 'app/ts/math';
+import Scene from "../scene";
+import { Sequencer, SequenceType } from "../sequencer";
+import { degToRad, radToDeg, isPowerOf2, randRange } from 'app/ts/math';
 import { mat4, vec4, vec3 } from 'gl-matrix';
 import { Mesh, MeshType, VertexLength } from 'app/ts/mesh';
+
+import * as BezierEasing from 'bezier-easing' ;
 
 let window = require('window');
 window.mat4 = mat4;
@@ -27,7 +29,6 @@ export default class Scene4 extends Scene {
   };
 
   textures;
-
   appState = {
     brightness: 1,
     fieldOfView: 45 * Math.PI / 180,
@@ -65,8 +66,14 @@ export default class Scene4 extends Scene {
     }
   };
 
+  sequencers: Array<Sequencer>;
+
   constructor () {
     super ();
+    this.sequencers = [
+      new Sequencer(3, SequenceType.PING_PONG, BezierEasing(0.86, 0, 0.07, 1)),
+      new Sequencer(2, SequenceType.PING_PONG, BezierEasing(0.645, 0.045, 0.355, 1)),
+    ]
   }
 
   /**
@@ -101,6 +108,9 @@ export default class Scene4 extends Scene {
       },
       modelViewMatrix: {
         location: gl.getUniformLocation(this.shaderProgram, 'uModelViewMatrix')
+      },
+      fuzzing: {
+        location: gl.getUniformLocation(this.shaderProgram, 'uFuzzing')
       },
       indices: {
         // Used to pass index information to gl when using draw elements
@@ -348,6 +358,7 @@ export default class Scene4 extends Scene {
       false,
       this.modelViewMatrix);
 
+    gl.uniform1f(this.programData.fuzzing.location, this.sequencers[0].easedPosition + .5);
     gl.uniform1f(this.programData.brightness.location, this.appState.brightness);
 
     // Tell WebGL which indices to use to index the vertices
@@ -363,23 +374,40 @@ export default class Scene4 extends Scene {
     }
 
     this.lastFrame = now;
-    window.requestAnimationFrame(() => this.render( gl ) );
+    window.requestAnimationFrame(() => this.render(gl) );
   }
 
   updateScene( delta ) {
-    mat4.rotate(
+    this.sequencers.forEach( sequence => {
+      sequence.update(delta);
+    });
+
+    mat4.identity(this.modelViewMatrix);
+
+    mat4.rotateY(
       this.modelViewMatrix,
       this.modelViewMatrix,
-      Math.PI / 8 * delta,
-      [0, 1, 0]
+      Math.PI * (this.sequencers[0].easedPosition - .5)
     );
 
-    mat4.rotate(
+    mat4.rotateX(
       this.modelViewMatrix,
       this.modelViewMatrix,
-      Math.PI / 8 * delta,
-      [1, 0, 0]
-    )
+      Math.PI / 6 * (this.sequencers[0].easedPosition - .5)
+    );
+
+    mat4.rotateZ(
+      this.modelViewMatrix,
+      this.modelViewMatrix,
+      Math.PI / 2 * (this.sequencers[1].easedPosition - .5)
+    );
+
+    // mat4.rotate(
+    //   this.modelViewMatrix,
+    //   this.modelViewMatrix,
+    //   Math.PI / 8 * delta,
+    //   [1, 0, 0]
+    // )
   }
 
   /**
