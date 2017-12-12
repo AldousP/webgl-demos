@@ -29,41 +29,21 @@ export default class Scene3 extends Scene {
   textures;
 
   appState = {
-    brightness: 1,
-    fieldOfView: 45 * Math.PI / 180,
-    aspect: 1.6,
-    zNear: 0.1,
-    zFar: 100.0,
+    rotationSpeed: 0.25,
     camX: 0,
     camY: 0,
-    camZ: -6.0
+    camZ: -5.1
   };
 
   paneConfig = {
-    brightness: {
+    rotationSpeed: {
       min: 0,
-      max: 1,
-      step: 0.1
-    },
-    fieldOfView: {
-      min: 0,
-      max: 3
-    },
-    aspect: {
-      min: 0,
-      max: 2
-    },
-    zNear: {
-      min: 0,
-      max: 10,
-      step: .01
-    },
-    zFar: {
-      min: 0,
-      max: 10,
-      step: .01
+      max: 15,
+      step: .1
     }
   };
+
+
 
   constructor () {
     super ();
@@ -75,7 +55,6 @@ export default class Scene3 extends Scene {
   setup ( canvasID: string ) {
     let gl = document.getElementById( canvasID ).getContext('webgl');
     this.gl = gl;
-
     this.shaderProgram = this.compileShaders();
     this.programData = {
       position: {
@@ -93,8 +72,11 @@ export default class Scene3 extends Scene {
       sampler: {
         location: gl.getUniformLocation(this.shaderProgram, 'uSampler')
       },
-      brightness: {
-        location: gl.getUniformLocation(this.shaderProgram, 'uBrightness')
+      offsetX: {
+        location: gl.getUniformLocation(this.shaderProgram, 'uOffsetX')
+      },
+      offsetY: {
+        location: gl.getUniformLocation(this.shaderProgram, 'uOffsetY')
       },
       projectionMatrix: {
         location: gl.getUniformLocation(this.shaderProgram, 'uProjectionMatrix')
@@ -274,10 +256,10 @@ export default class Scene3 extends Scene {
 
     mat4.perspective(
       this.projectionMatrix,
-      this.appState.fieldOfView,
-      this.appState.aspect,
-      this.appState.zNear,
-      this.appState.zFar);
+      45 * Math.PI / 180,
+      1.6,
+      0.1,
+      100.0);
 
     mat4.translate(
       this.projectionMatrix,     // destination matrix
@@ -348,8 +330,6 @@ export default class Scene3 extends Scene {
       false,
       this.modelViewMatrix);
 
-    gl.uniform1f(this.programData.brightness.location, this.appState.brightness);
-
     // Tell WebGL which indices to use to index the vertices
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.programData.indices.buffer);
 
@@ -370,16 +350,10 @@ export default class Scene3 extends Scene {
     mat4.rotate(
       this.modelViewMatrix,
       this.modelViewMatrix,
-      Math.PI / 8 * delta,
+      (this.appState.rotationSpeed) * delta,
       [0, 1, 0]
     );
 
-    mat4.rotate(
-      this.modelViewMatrix,
-      this.modelViewMatrix,
-      Math.PI / 8 * delta,
-      [1, 0, 0]
-    )
   }
 
   /**

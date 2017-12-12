@@ -12,10 +12,23 @@ class Sequencer {
   constructor (length: number, type?: SequenceType, easing?: Easing) {
     this.length = length;
     this.position = 0;
-    this.playing = true;
+    this.playing = false;
     this.direction = 1;
     this.type = type ? type : SequenceType.NORMAL;
     this.easing = easing;
+  }
+
+  start () {
+    this.playing = true;
+  }
+
+  stop () {
+    this.playing = false;
+    this.position = 0;
+  }
+
+  pause () {
+    this.playing = false;
   }
 
   update (delta) {
