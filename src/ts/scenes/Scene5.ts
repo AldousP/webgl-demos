@@ -32,10 +32,16 @@ export default class Scene5 extends Scene {
   appState = {
     camX: 0,
     camY: 0,
-    camZ: -6.0
+    camZ: -6.0,
+    rotation: 0
   };
 
   paneConfig = {
+    rotation: {
+      min: -Math.PI,
+      max: Math.PI,
+      step: Math.PI / 128
+    }
   };
 
   sequencers: Array<Sequencer>;
@@ -54,6 +60,11 @@ export default class Scene5 extends Scene {
   setup ( canvasID: string ) {
     let gl = document.getElementById( canvasID ).getContext('webgl');
     this.gl = gl;
+    this.sequencers = [
+      new Sequencer(20, SequenceType.LOOPING)
+    ];
+
+    this.sequencers.forEach(s => s.start());
 
     this.shaderProgram = this.compileShaders();
     this.programData = {
@@ -65,6 +76,10 @@ export default class Scene5 extends Scene {
         location: gl.getAttribLocation(this.shaderProgram, 'aVertexColor'),
         buffer: gl.createBuffer()
       },
+      normal: {
+        location: gl.getAttribLocation(this.shaderProgram, 'aVertexNormal'),
+        buffer: gl.createBuffer()
+      },
       textureCoord: {
         location: gl.getAttribLocation(this.shaderProgram, 'aTextureCoord'),
         buffer: gl.createBuffer()
@@ -72,8 +87,8 @@ export default class Scene5 extends Scene {
       sampler: {
         location: gl.getUniformLocation(this.shaderProgram, 'uSampler')
       },
-      brightness: {
-        location: gl.getUniformLocation(this.shaderProgram, 'uBrightness')
+      noramlMatrix: {
+        location: gl.getUniformLocation(this.shaderProgram, 'uNormalMatrix')
       },
       projectionMatrix: {
         location: gl.getUniformLocation(this.shaderProgram, 'uProjectionMatrix')
@@ -128,12 +143,12 @@ export default class Scene5 extends Scene {
     ];
 
     const faceColors = [
-      [1.0,  1.0,  1.0,  1.0],    // Front face: white
-      [1.0,  0.0,  0.0,  1.0],    // Back face: red
-      [0.0,  1.0,  0.0,  1.0],    // Top face: green
-      [0.0,  0.0,  1.0,  1.0],    // Bottom face: blue
-      [1.0,  1.0,  0.0,  1.0],    // Right face: yellow
-      [1.0,  0.0,  1.0,  1.0],    // Left face: purple
+      [1.0,  1.0,  1.0,  1.0],
+      [1.0,  1.0,  1.0,  1.0],
+      [1.0,  1.0,  1.0,  1.0],
+      [1.0,  1.0,  1.0,  1.0],
+      [1.0,  1.0,  1.0,  1.0],
+      [1.0,  1.0,  1.0,  1.0]
     ];
 
     //  Build the colors for each vertex on the cube
@@ -186,6 +201,44 @@ export default class Scene5 extends Scene {
       20, 21, 22,     20, 22, 23,   // left
     ];
 
+    const vertexNormals = [
+      // Front
+      0.0,  0.0,  1.0,
+      0.0,  0.0,  1.0,
+      0.0,  0.0,  1.0,
+      0.0,  0.0,  1.0,
+
+      // Back
+      0.0,  0.0, -1.0,
+      0.0,  0.0, -1.0,
+      0.0,  0.0, -1.0,
+      0.0,  0.0, -1.0,
+
+      // Top
+      0.0,  1.0,  0.0,
+      0.0,  1.0,  0.0,
+      0.0,  1.0,  0.0,
+      0.0,  1.0,  0.0,
+
+      // Bottom
+      0.0, -1.0,  0.0,
+      0.0, -1.0,  0.0,
+      0.0, -1.0,  0.0,
+      0.0, -1.0,  0.0,
+
+      // Right
+      1.0,  0.0,  0.0,
+      1.0,  0.0,  0.0,
+      1.0,  0.0,  0.0,
+      1.0,  0.0,  0.0,
+
+      // Left
+      -1.0,  0.0,  0.0,
+      -1.0,  0.0,  0.0,
+      -1.0,  0.0,  0.0,
+      -1.0,  0.0,  0.0
+    ];
+
     gl.bindBuffer(gl.ARRAY_BUFFER, this.programData.position.buffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
@@ -194,6 +247,9 @@ export default class Scene5 extends Scene {
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.programData.textureCoord.buffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates), gl.STATIC_DRAW);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.programData.normal.buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexNormals), gl.STATIC_DRAW);
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.programData.indices.buffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
@@ -306,7 +362,6 @@ export default class Scene5 extends Scene {
       const stride = 0;
       const offset = 0;
       gl.bindBuffer(gl.ARRAY_BUFFER, this.programData.color.buffer);
-      // console.log(this.programData.color.location);
       gl.vertexAttribPointer(
         this.programData.color.location,
         numComponents,
@@ -315,6 +370,25 @@ export default class Scene5 extends Scene {
         stride,
         offset);
       gl.enableVertexAttribArray(this.programData.color.location);
+    }
+
+    // Tell WebGL how to pull out the normals from
+    // the normal buffer into the vertexNormal attribute.
+    {
+      const numComponents = 3;
+      const type = gl.FLOAT;
+      const normalize = false;
+      const stride = 0;
+      const offset = 0;
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.programData.normal.buffer);
+      gl.vertexAttribPointer(
+        this.programData.normal.location,
+        numComponents,
+        type,
+        normalize,
+        stride,
+        offset);
+      gl.enableVertexAttribArray(this.programData.normal.location);
     }
 
     gl.useProgram(this.shaderProgram);
@@ -326,7 +400,13 @@ export default class Scene5 extends Scene {
       this.programData.modelViewMatrix.location,
       false,
       this.modelViewMatrix);
-
+    const normalMatrix = mat4.create();
+    mat4.invert(normalMatrix, this.modelViewMatrix);
+    mat4.transpose(normalMatrix, normalMatrix);
+    gl.uniformMatrix4fv(
+      this.programData.noramlMatrix.location,
+      false,
+      normalMatrix);
 
     // Tell WebGL which indices to use to index the vertices
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.programData.indices.buffer);
@@ -352,7 +432,7 @@ export default class Scene5 extends Scene {
     mat4.rotate(
       this.modelViewMatrix,
       this.modelViewMatrix,
-      Math.PI / 3,
+      this.appState.rotation,
       [0, 1, 0]
     )
   }
