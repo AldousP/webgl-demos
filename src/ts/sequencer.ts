@@ -20,11 +20,18 @@ class Sequencer {
 
   start () {
     this.playing = true;
+    this.position = 0;
+    this.easedPosition = 0;
+  }
+
+  play () {
+    this.playing = true;
   }
 
   stop () {
     this.playing = false;
     this.position = 0;
+    this.easedPosition = 0;
   }
 
   pause () {

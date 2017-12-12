@@ -11,13 +11,13 @@ window.mat4 = mat4;
 
 let document = window.document;
 
-export default class Scene4 extends Scene {
+export default class Scene5 extends Scene {
   gl;
 
   lastFrame: number = new Date().getTime();
   delta: number;
-  vertShader: string = require('app/glsl/vertex/scene_4.glsl');
-  fragShader: string = require('app/glsl/fragment/scene_4.glsl');
+  vertShader: string = require('app/glsl/vertex/scene_5.glsl');
+  fragShader: string = require('app/glsl/fragment/scene_5.glsl');
   shaderProgram;
 
   programData: any;
@@ -30,47 +30,22 @@ export default class Scene4 extends Scene {
 
   textures;
   appState = {
-    brightness: 1,
-    fieldOfView: 45 * Math.PI / 180,
-    aspect: 1.6,
-    zNear: 0.1,
-    zFar: 100.0,
     camX: 0,
     camY: 0,
     camZ: -6.0
   };
 
   paneConfig = {
-    brightness: {
-      min: 0,
-      max: 1,
-      step: 0.1
-    },
-    fieldOfView: {
-      min: 0,
-      max: 3
-    },
-    aspect: {
-      min: 0,
-      max: 2
-    },
-    zNear: {
-      min: 0,
-      max: 10,
-      step: .01
-    },
-    zFar: {
-      min: 0,
-      max: 10,
-      step: .01
-    }
   };
 
   sequencers: Array<Sequencer>;
 
   constructor () {
     super ();
-
+    this.sequencers = [
+      new Sequencer(3, SequenceType.PING_PONG, BezierEasing(0.86, 0, 0.07, 1)),
+      new Sequencer(2, SequenceType.PING_PONG, BezierEasing(0.645, 0.045, 0.355, 1)),
+    ]
   }
 
   /**
@@ -79,12 +54,6 @@ export default class Scene4 extends Scene {
   setup ( canvasID: string ) {
     let gl = document.getElementById( canvasID ).getContext('webgl');
     this.gl = gl;
-    this.sequencers = [
-      new Sequencer(3, SequenceType.PING_PONG, BezierEasing(0.86, 0, 0.07, 1)),
-      new Sequencer(2, SequenceType.PING_PONG, BezierEasing(0.645, 0.045, 0.355, 1)),
-    ];
-
-    this.sequencers.forEach(s => s.start());
 
     this.shaderProgram = this.compileShaders();
     this.programData = {
@@ -111,9 +80,6 @@ export default class Scene4 extends Scene {
       },
       modelViewMatrix: {
         location: gl.getUniformLocation(this.shaderProgram, 'uModelViewMatrix')
-      },
-      fuzzing: {
-        location: gl.getUniformLocation(this.shaderProgram, 'uFuzzing')
       },
       indices: {
         // Used to pass index information to gl when using draw elements
@@ -287,10 +253,10 @@ export default class Scene4 extends Scene {
 
     mat4.perspective(
       this.projectionMatrix,
-      this.appState.fieldOfView,
-      this.appState.aspect,
-      this.appState.zNear,
-      this.appState.zFar);
+      45 * Math.PI / 180,
+      1.6,
+      0.1,
+      100.0);
 
     mat4.translate(
       this.projectionMatrix,     // destination matrix
@@ -361,12 +327,9 @@ export default class Scene4 extends Scene {
       false,
       this.modelViewMatrix);
 
-    gl.uniform1f(this.programData.fuzzing.location, this.sequencers[0].easedPosition + .5);
-    gl.uniform1f(this.programData.brightness.location, this.appState.brightness);
 
     // Tell WebGL which indices to use to index the vertices
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.programData.indices.buffer);
-
     gl.uniform1i(this.programData.sampler.location, 0);
 
     {
@@ -386,31 +349,12 @@ export default class Scene4 extends Scene {
     });
 
     mat4.identity(this.modelViewMatrix);
-
-    mat4.rotateY(
+    mat4.rotate(
       this.modelViewMatrix,
       this.modelViewMatrix,
-      Math.PI * (this.sequencers[0].easedPosition - .5)
-    );
-
-    mat4.rotateX(
-      this.modelViewMatrix,
-      this.modelViewMatrix,
-      Math.PI / 6 * (this.sequencers[0].easedPosition - .5)
-    );
-
-    mat4.rotateZ(
-      this.modelViewMatrix,
-      this.modelViewMatrix,
-      Math.PI / 2 * (this.sequencers[1].easedPosition - .5)
-    );
-
-    // mat4.rotate(
-    //   this.modelViewMatrix,
-    //   this.modelViewMatrix,
-    //   Math.PI / 8 * delta,
-    //   [1, 0, 0]
-    // )
+      Math.PI / 3,
+      [0, 1, 0]
+    )
   }
 
   /**
