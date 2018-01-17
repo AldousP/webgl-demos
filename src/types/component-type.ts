@@ -1,5 +1,4 @@
 import { mat4 } from "gl-matrix";
-import { Entity } from "./entity";
 
 const ComponentTypes = {
   transform: 'transform',
@@ -36,17 +35,6 @@ class MeshState {
 class Mesh extends Component {
   type = new ComponentType (ComponentTypes.mesh, '1');
   state = new MeshState();
-}
-
-let transformComponent = new Transform();
-let entity = new Entity();
-
-
-class EntityManager {
-  componentMap: Map<string, Array<number>> = new Map();
-  entityIDMap: Map<string, Entity> = new Map();
-  entityCount: number;
-  entityID: number;
 }
 
 export enum MeshType {
