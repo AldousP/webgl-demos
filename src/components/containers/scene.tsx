@@ -33,15 +33,29 @@ function connectScene ( WrappedComponent ) {
       }
     }
 
-    renderToolPane () {
+    renderToolPane = () => {
       if ( this.state.toolpaneOpen ) {
         return (
           <Toolpane>
-
+            {
+              this.state.editorValues.map( ( value, i ) => {
+                return (
+                  <EditorValue key={ i }>
+                    { value.name }
+                  </EditorValue>
+                )
+              })
+            }
           </Toolpane>
         )
       }
-    }
+    };
+
+    setEditorValues = ( editorValues: Array<EditorValue> ) => {
+      this.setState({
+        editorValues
+      } );
+    };
 
     render () {
       return (
@@ -53,7 +67,7 @@ function connectScene ( WrappedComponent ) {
           { this.renderToolPane() }
 
           <ChildComponent>
-            <WrappedComponent { ...this.props } />
+            <WrappedComponent { ...this.props } setEditorValues={ this.setEditorValues } />
           </ChildComponent>
         </SceneContainer>
       ) }
@@ -86,6 +100,12 @@ const Canvas = styled.canvas`
     max-width: 95vw;
     max-height: 55vh;
   }
+`;
+
+const EditorValue = styled.div`
+   height: 48px;
+   background-color: salmon;
+   color: black;
 `;
 
 export { connectScene };
