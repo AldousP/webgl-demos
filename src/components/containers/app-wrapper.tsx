@@ -13,6 +13,7 @@ const Container = styled.div`
   background-color: ${ props => props.theme.bg };
   color: ${ props => props.theme.color };
   background-color: ${ props => props.theme.bg };
+  height: 100%;
 `;
 
 class AppWrapper extends React.Component<AppProps, {}> {
