@@ -13,11 +13,11 @@ export type SceneState = {
   toolpaneOpen: boolean
 }
 
-const SceneContainer = styled.div`
+const SceneContainer = styled.div`,
   
 `;
 
-export default class Scene<P, S> extends React.Component<SceneProps & P, SceneState & S> {
+export default class Scene<P, S> extends React.Component<SceneProps, SceneState> {
   sceneState: Object; // Control internal app state.
   scenePaneConfig: Object; // UI representation of state data
   programData: Object; // Buffers and pointers used by the scene shader
@@ -36,7 +36,7 @@ export default class Scene<P, S> extends React.Component<SceneProps & P, SceneSt
       toolpaneOpen: true
     });
 
-    console.log( this.state.name );
+    // console.log( this.state.name );
   }
 
   render () {
@@ -48,4 +48,10 @@ export default class Scene<P, S> extends React.Component<SceneProps & P, SceneSt
     )
   }
 }
+
+function BuildScene () {
+
+};
+
+export { BuildScene };
 

@@ -4,43 +4,39 @@ import styled from 'styled-components';
 export type Props = {}
 export type State = {}
 
-import FaBeer from "react-icons/fa/beer"
+import FaGithub = require("react-icons/lib/fa/github");
 
 const HeaderContainer = styled.div`
   height: 50px;
   background-color: ${ props => props.theme.header_bg };
   display: grid;
-  grid-template-columns: repeat(2, 0fr);
-  grid-gap: 10px;
-  grid-auto-rows: minmax(100px, auto);
+  grid-template-columns: 25vw 64px;
+  justify-content: space-between;
 `;
 
 const Col = styled.div`
-  background-color: lightcoral;
-  width: 50px;
-  height: 50px;
-  grid-auto-columns: 200px;
   grid-row: 1;
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 8px;
 `;
 
-// const Icon = styled( FaBeer )`
-//   color: pink
-// `;
+const Logo = Col.extend`
+  margin-left: 16px;
+  justify-content: flex-start;
+`;
 
 class Header extends React.Component<Props, State > {
   render() {
     return (
       <HeaderContainer>
-        <Col>
+        <Logo>
           Header
-        </Col>
-
+        </Logo>
         <Col>
-          <FaBeer/>
+          <FaGithub/>
         </Col>
       </HeaderContainer>
   );
