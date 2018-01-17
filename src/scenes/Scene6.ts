@@ -1,8 +1,6 @@
 import * as React from 'react';
 
-import { Sequencer } from 'src/util/sequencer';
-
-import Scene from '@app/components/containers/scene';
+import Scene, { connectScene } from '@app/components/containers/scene';
 
 export type Props = {
 
@@ -12,18 +10,20 @@ export type State = {
 
 }
 
-export default class Scene6 extends Scene<Props, State> {
+class Scene6 extends React.Component<Props, State> {
 
   constructor ( props ) {
     super ( props );
-
   }
 
   componentDidMount () {
-    super.componentDidMount();
-    this.setState( {
-      name: 'Scene 6'
-    })
+
+  }
+
+  render () {
+    return '';
   }
 }
+
+export default connectScene( Scene6 );
 

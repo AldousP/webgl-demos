@@ -1,57 +1,92 @@
-import { Sequencer } from 'src/util/sequencer';
 import * as React from 'react';
-import Viewport from '@app/components/UI/viewport';
-import ToolPane from '@app/components/UI/toolpane';
 import styled from 'styled-components';
+import breakpoints from "@app/components/styled/breakpoints";
 
-export type SceneProps = {
+type EditorValue = {
+  name: string;
+  type: string;
+  editorConfig: Object;
+}
+
+export type Props = {
 
 }
 
-export type SceneState = {
+export type State = {
   name: string
-  toolpaneOpen: boolean
+  toolpaneOpen: boolean,
+  canvas_w: number,
+  canvas_h: number,
+  editorValues: Array<EditorValue>
 }
 
-const SceneContainer = styled.div`,
-  
+function connectScene ( WrappedComponent ) {
+  return class extends React.Component<Props, State> {
+    constructor ( props ) {
+      super( props );
+      this.state = {
+        name: '',
+        toolpaneOpen: true,
+        canvas_w: 640,
+        canvas_h: 360,
+        editorValues: []
+      }
+    }
+
+    renderToolPane () {
+      if ( this.state.toolpaneOpen ) {
+        return (
+          <Toolpane>
+
+          </Toolpane>
+        )
+      }
+    }
+
+    render () {
+      return (
+        <SceneContainer>
+            <Canvas
+              width={ this.state.canvas_w }
+              height={ this.state.canvas_h }
+            />
+          { this.renderToolPane() }
+
+          <ChildComponent>
+            <WrappedComponent { ...this.props } />
+          </ChildComponent>
+        </SceneContainer>
+      ) }
+  }
+}
+
+const SceneContainer = styled.div`
+  border: thin solid white;
+  display: grid;
+  grid-template-columns: 75% 25%;
+  justify-content: space-between;
+  @media (max-width: ${ breakpoints.small }px) {
+    grid-template-columns: 1fr;
+    grid-template-rows: 65% 35%;
+  }
 `;
 
-export default class Scene<P, S> extends React.Component<SceneProps, SceneState> {
-  sceneState: Object; // Control internal app state.
-  scenePaneConfig: Object; // UI representation of state data
-  programData: Object; // Buffers and pointers used by the scene shader
-  paneConfig: Object = {};
-  appState: Object = {};
-  textures: Object;
-  sequencers: Array<Sequencer>;
+const Toolpane = styled.div`
+  border: thin solid salmon;
+`;
 
-  constructor ( props ) {
-    super ( props );
+const ChildComponent = styled.div`
+  display: none;
+`;
 
+const Canvas = styled.canvas`
+   max-width: 100%;
+   border: thin solid cornflowerblue;
+   @media (max-width: ${ breakpoints.small }px) {
+    max-width: 95vw;
+    max-height: 55vh;
   }
+`;
 
-  componentDidMount () {
-    this.setState({
-      toolpaneOpen: true
-    });
-
-    // console.log( this.state.name );
-  }
-
-  render () {
-    return (
-      <SceneContainer>
-        <Viewport />
-        <ToolPane />
-      </SceneContainer>
-    )
-  }
-}
-
-function BuildScene () {
-
-};
-
-export { BuildScene };
+export { connectScene };
 

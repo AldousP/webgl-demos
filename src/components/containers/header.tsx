@@ -10,7 +10,7 @@ const HeaderContainer = styled.div`
   height: 50px;
   background-color: ${ props => props.theme.header_bg };
   display: grid;
-  grid-template-columns: 25vw 64px;
+  grid-template-columns: 45vw 64px;
   justify-content: space-between;
 `;
 
@@ -28,15 +28,23 @@ const Logo = Col.extend`
   justify-content: flex-start;
 `;
 
+const Link = styled.a`
+  font-size: 28px;
+  color: white;
+  text-decoration: none;
+`;
+
 class Header extends React.Component<Props, State > {
   render() {
     return (
       <HeaderContainer>
         <Logo>
-          Header
+          WebGL demos
         </Logo>
         <Col>
-          <FaGithub/>
+          <Link target="_blank" href="https://github.com/AldousP/webgl-demos">
+            <FaGithub/>
+          </Link>
         </Col>
       </HeaderContainer>
   );

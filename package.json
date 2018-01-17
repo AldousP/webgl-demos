@@ -46,6 +46,7 @@
     "webpack-glsl-loader": "^1.0.1"
   },
   "dependencies": {
+    "@types/react-redux": "^5.0.14",
     "bezier-easing": "^2.0.3",
     "classnames": "^2.2.5",
     "gl-matrix": "^2.4.0",
