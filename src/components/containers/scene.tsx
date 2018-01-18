@@ -76,8 +76,8 @@ export type State = {
 
 
 export default class Scene extends React.Component<Props, State> {
-  // vertShader: string = require( '@app/glsl/vertex/scene_5.glsl' );
-  // fragShader: string = require( '@app/glsl/fragment/scene_5.glsl' );
+  vertShader: string = require( '@app/GLSL/vertex/scene_5.glsl' );
+  fragShader: string = require( '@app/GLSL/fragment/scene_5.glsl' );
 
   constructor ( props ) {
     super( props );

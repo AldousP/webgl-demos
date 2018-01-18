@@ -35,7 +35,7 @@ module.exports = {
     rules: [
       {
         test: /\.glsl$/,
-        use: 'webpack-GLSL-loader'
+        use: 'webpack-glsl-loader'
       },
       {
         test: /\.jsx?$/,
