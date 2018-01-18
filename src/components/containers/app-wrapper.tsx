@@ -15,9 +15,10 @@ export type State = {
 }
 
 const Container = styled.div`
-  background-color: ${ props => props.theme.bg };
+  background-color: ${ props => props.theme.background };
   color: ${ props => props.theme.color };
   height: 100%;
+  overflow-y: scroll;
 `;
 
 class AppWrapper extends React.Component<Props, State> {

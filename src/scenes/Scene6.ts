@@ -1,33 +1,53 @@
-import * as React from 'react';
+import Scene, { EditorValue } from '@app/components/containers/scene';
 
-import Scene, { connectScene } from '@app/components/containers/scene';
-
-export type Props = {
-  setEditorValues: Function
-}
-
-export type State = {
-
-}
-
-class Scene6 extends React.Component<Props, State> {
-
+class Scene6 extends Scene {
   constructor ( props ) {
     super ( props );
   }
 
   componentDidMount () {
-    this.props.setEditorValues([
-      {
-        name: 'test'
-      }
-    ]);
+    this.setState({
+      editorValues: [
+        {
+          name: 'CamX',
+          type: 'SLIDER',
+          config: {
+            min: 0,
+            max: 10,
+            step: 0.1
+          }
+        },
+        {
+          name: 'CamY',
+          type: 'SLIDER',
+          config: {
+            min: 0,
+            max: 10,
+            step: 0.1
+          }
+        },
+        {
+          name: 'CamZ',
+          type: 'SLIDER',
+          config: {
+            min: 0,
+            max: 10,
+            step: 0.1
+          }
+        }
+      ]
+    })
   }
 
-  render () {
-    return '';
+  /**
+   * Receive the elapsed time since the last frame.
+   *
+   * @param {number} delta
+   */
+  updateScene ( delta: number, glContext ) {
+
   }
 }
 
-export default connectScene( Scene6 );
+export default Scene6;
 

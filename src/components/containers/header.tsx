@@ -8,7 +8,7 @@ import FaGithub = require("react-icons/lib/fa/github");
 
 const HeaderContainer = styled.div`
   height: 50px;
-  background-color: ${ props => props.theme.header_bg };
+  background-color: ${ props => props.theme.headerBackground};
   display: grid;
   grid-template-columns: 45vw 64px;
   justify-content: space-between;

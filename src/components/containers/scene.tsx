@@ -1,11 +1,12 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import breakpoints from "@app/components/styled/breakpoints";
+import breakpoints from '@app/components/styled/breakpoints';
+import EditorValueInput from "@app/components/UI/editor-value-input";
 
-type EditorValue = {
+export type EditorValue = {
   name: string;
-  type: string;
-  editorConfig: Object;
+  type: 'SLIDER' | 'TOGGLE' | 'TEXT';
+  config: Object;
 }
 
 export type Props = {
@@ -20,58 +21,54 @@ export type State = {
   editorValues: Array<EditorValue>
 }
 
-function connectScene ( WrappedComponent ) {
-  return class extends React.Component<Props, State> {
-    constructor ( props ) {
-      super( props );
-      this.state = {
-        name: '',
-        toolpaneOpen: true,
-        canvas_w: 640,
-        canvas_h: 360,
-        editorValues: []
-      }
+
+export default class Scene extends React.Component<Props, State> {
+  constructor ( props ) {
+    super( props );
+    this.state = {
+      name: '',
+      toolpaneOpen: true,
+      canvas_w: 640,
+      canvas_h: 360,
+      editorValues: []
     }
-
-    renderToolPane = () => {
-      if ( this.state.toolpaneOpen ) {
-        return (
-          <Toolpane>
-            {
-              this.state.editorValues.map( ( value, i ) => {
-                return (
-                  <EditorValue key={ i }>
-                    { value.name }
-                  </EditorValue>
-                )
-              })
-            }
-          </Toolpane>
-        )
-      }
-    };
-
-    setEditorValues = ( editorValues: Array<EditorValue> ) => {
-      this.setState({
-        editorValues
-      } );
-    };
-
-    render () {
-      return (
-        <SceneContainer>
-            <Canvas
-              width={ this.state.canvas_w }
-              height={ this.state.canvas_h }
-            />
-          { this.renderToolPane() }
-
-          <ChildComponent>
-            <WrappedComponent { ...this.props } setEditorValues={ this.setEditorValues } />
-          </ChildComponent>
-        </SceneContainer>
-      ) }
   }
+
+  componentDidMount () {
+    let canvas: HTMLElement = document.getElementById( 'scene-gl-canvas' );
+    window.requestAnimationFrame( this.mainLoop );
+  }
+
+  renderToolPane = () => {
+    if ( this.state.toolpaneOpen ) {
+      return (
+        <Toolpane>
+          {
+            this.state.editorValues.map( ( value, i ) => {
+              return (
+                <EditorValueInput key={ i } data={ value } />
+              )
+            } )
+          }
+        </Toolpane>
+      )
+    }
+  };
+
+  mainLoop = () => {
+    window.requestAnimationFrame( this.mainLoop );
+  };
+
+  render () {
+    return (
+      <SceneContainer >
+        <Canvas id="scene-gl-canvas"
+                width={ this.state.canvas_w }
+                height={ this.state.canvas_h }
+        />
+        { this.renderToolPane() }
+      </SceneContainer>
+    ) }
 }
 
 const SceneContainer = styled.div`
@@ -89,10 +86,6 @@ const Toolpane = styled.div`
   border: thin solid salmon;
 `;
 
-const ChildComponent = styled.div`
-  display: none;
-`;
-
 const Canvas = styled.canvas`
    max-width: 100%;
    border: thin solid cornflowerblue;
@@ -102,11 +95,4 @@ const Canvas = styled.canvas`
   }
 `;
 
-const EditorValue = styled.div`
-   height: 48px;
-   background-color: salmon;
-   color: black;
-`;
-
-export { connectScene };
 
