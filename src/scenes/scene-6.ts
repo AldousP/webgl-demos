@@ -11,7 +11,7 @@ class Scene6 extends Scene {
         new SliderValue( 'X', 0, 0, 10 ),
         new SliderValue( 'Y', 0, 0, 10 ),
         new SliderValue( 'Z', 0, 0, 10 ),
-        new TextValue( 'Z', 'test', 10 )
+        new TextValue( 'Name', 'test', 10 )
       ]
     })
   }

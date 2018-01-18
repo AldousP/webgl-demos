@@ -76,8 +76,8 @@ export type State = {
 
 
 export default class Scene extends React.Component<Props, State> {
-  vertShader: string = require( '@app/GLSL/vertex/scene_5.glsl' );
-  fragShader: string = require( '@app/GLSL/fragment/scene_5.glsl' );
+  // vertShader: string = require( '@app/glsl/vertex/scene_5.glsl' );
+  // fragShader: string = require( '@app/glsl/fragment/scene_5.glsl' );
 
   constructor ( props ) {
     super( props );
@@ -103,11 +103,15 @@ export default class Scene extends React.Component<Props, State> {
           {
             this.state.editorValues.map( ( value, i ) => {
               return (
-                <EditorValueInput key={ i } data={ value } onChange={ e => {
-                  console.log( e );
+                <EditorValueInput key={ i } data={ value } onChange={ newVal => {
+                  this.setState({
+                    editorValues: this.state.editorValues.map( val => {
+                      return val.name === value.name ? newVal : val
+                    })
+                  })
                 }} />
-              )
-            } )
+              ) // jsx
+            } ) // map
           }
         </Toolpane>
       )
