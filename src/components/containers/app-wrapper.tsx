@@ -4,7 +4,7 @@ import AppContent from '@app/components/containers/app-content';
 
 import styled, { ThemeProvider } from 'styled-components';
 import { darkTheme, lightTheme } from '@app/components/styled/themes';
-import Scene6 from '@app/scenes/Scene6';
+import Scene6 from '@app/scenes/scene-6';
 
 
 export type Props = {

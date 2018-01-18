@@ -6,6 +6,7 @@ import EditorValueInput from "@app/components/UI/editor-value-input";
 export type EditorValue = {
   name: string;
   type: 'SLIDER' | 'TOGGLE' | 'TEXT';
+  value: boolean | string | number;
   config: Object;
 }
 

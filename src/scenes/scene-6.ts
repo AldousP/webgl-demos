@@ -11,15 +11,17 @@ class Scene6 extends Scene {
         {
           name: 'CamX',
           type: 'SLIDER',
+          value: 0,
           config: {
             min: 0,
             max: 10,
-            step: 0.1
+            step: 0.1,
           }
         },
         {
           name: 'CamY',
           type: 'SLIDER',
+          value: 0,
           config: {
             min: 0,
             max: 10,
@@ -29,6 +31,7 @@ class Scene6 extends Scene {
         {
           name: 'CamZ',
           type: 'SLIDER',
+          value: 0,
           config: {
             min: 0,
             max: 10,

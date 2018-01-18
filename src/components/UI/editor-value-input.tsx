@@ -26,17 +26,21 @@ export default class EditorValueInput extends React.Component<Props, State> {
   }
 
   render () {
-    let { name } = this.props.data;
+    let { name, value } = this.props.data;
     return (
       <ValueWrapper>
         <LabelRow>
-          { name }
+          <Name>
+            { name }
+          </Name>
+          <Value>
+            { value }
+          </Value>
         </LabelRow>
         <InputRow>
           {
             this.renderInput()
           }
-
         </InputRow>
       </ValueWrapper>
     )
@@ -44,29 +48,38 @@ export default class EditorValueInput extends React.Component<Props, State> {
 }
 
 const ValueWrapper = styled.div`
-   //height: 48px;
-   background-color: ${ props => props.theme.editor.valueBackground };
-   border-radius: 8px;
-   margin: 4px;
-   padding: 8px;
-   color: ${ props => props.theme.color };
-   font-weight: bolder;
-   font-style: italic;
+  background-color: ${ props => props.theme.editor.valueBackground };
+  border-radius: 2px;
+  margin: 4px;
+  padding: 8px;
+  color: ${ props => props.theme.color };
 `;
 
 const InputRow = styled.div`
- display: flex;
- justify-content: center;
- align-items: center;
- width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 `;
 
 const LabelRow = styled.div`
-  font-size: 14px;
+  font-size: 12px;
+  display: inline-flex;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const Name = styled.div`
+  font-size: 12px;
+  padding: 4px;
+`;
+
+const Value = styled.div`
+  font-size: 12px;
   padding: 4px;
 `;
 
 const Slider = styled.input`
-  width: 100%;
+  width: 85%;
   max-width: 256px;
 `;
