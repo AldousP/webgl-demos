@@ -1,4 +1,4 @@
-import Scene, { EditorValue } from '@app/components/containers/scene';
+import Scene, { EditorValue, EditorValueInputType, SliderValue, TextValue } from '@app/components/containers/scene';
 
 class Scene6 extends Scene {
   constructor ( props ) {
@@ -8,36 +8,10 @@ class Scene6 extends Scene {
   componentDidMount () {
     this.setState({
       editorValues: [
-        {
-          name: 'CamX',
-          type: 'SLIDER',
-          value: 0,
-          config: {
-            min: 0,
-            max: 10,
-            step: 0.1,
-          }
-        },
-        {
-          name: 'CamY',
-          type: 'SLIDER',
-          value: 0,
-          config: {
-            min: 0,
-            max: 10,
-            step: 0.1
-          }
-        },
-        {
-          name: 'CamZ',
-          type: 'SLIDER',
-          value: 0,
-          config: {
-            min: 0,
-            max: 10,
-            step: 0.1
-          }
-        }
+        new SliderValue( 'X', 0, 0, 10 ),
+        new SliderValue( 'Y', 0, 0, 10 ),
+        new SliderValue( 'Z', 0, 0, 10 ),
+        new TextValue( 'Z', 'test', 10 )
       ]
     })
   }
