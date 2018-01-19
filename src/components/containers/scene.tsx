@@ -8,6 +8,8 @@ import EditorValueInput from "@app/components/UI/editor-value-input";
 import { Sequencer, SequenceType } from '@app/util/sequencer';
 import { degToRad, radToDeg, isPowerOf2, randRange } from '@app/util/math';
 
+let cube = require( 'static/models/cube.obj' ).default;
+
 const window = require( 'window' );
 const document = window.document;
 window.mat4 = mat4;
@@ -74,13 +76,24 @@ export type State = {
   paused: boolean
 }
 
+class Camera {
+  projection: mat4;
+  fieldOfView: number;
+  near: number;
+  far: number;
+  aspect: number;
+}
 
 export default class Scene extends React.Component<Props, State> {
+  delta: number;
+  last: number;
+  gl: WebGLRenderingContext;
   vertShader: string = require( '@app/GLSL/vertex/scene_5.glsl' );
   fragShader: string = require( '@app/GLSL/fragment/scene_5.glsl' );
+  sequencers: Array<Sequencer>;
 
   constructor ( props ) {
-    super( props );
+    super(props);
     this.state = {
       name: '',
       toolpaneOpen: true,
@@ -88,11 +101,15 @@ export default class Scene extends React.Component<Props, State> {
       canvas_h: 360,
       editorValues: [],
       paused: false
-    }
+    };
+
+    this.last = new Date().getTime();
   }
 
+
   componentDidMount () {
-    let canvas: HTMLElement = document.getElementById( 'scene-gl-canvas' );
+    let canvas: HTMLCanvasElement = document.getElementById( 'scene-gl-canvas' );
+    this.gl = canvas.getContext( 'webgl' );
     window.requestAnimationFrame( this.mainLoop );
   }
 
@@ -119,7 +136,29 @@ export default class Scene extends React.Component<Props, State> {
   };
 
   mainLoop = () => {
+    let current = new Date().getTime();
+    this.delta = (current - this.last) / 1000;
+    this.last = current;
+
+    if ( !this.state.paused ) {
+      this.updateScene( this.delta );
+    }
+
+    this.renderScene( this.delta, this.gl );
     window.requestAnimationFrame( this.mainLoop );
+  };
+
+  updateScene = ( delta: number ) => {
+
+  };
+
+  renderScene = ( delta: number, gl: WebGLRenderingContext ) => {
+    gl.viewport( 0, 0, gl.canvas.width, gl.canvas.height );
+    gl.clearColor( 0.0, 0.0, 0.0, 1.0 );  // Clear to black, fully opaque
+    gl.clearDepth( 1.0 );                 // Clear everything
+    gl.enable( gl.DEPTH_TEST );           // Enable depth testing
+    gl.depthFunc( gl.LEQUAL) ;            // Near things obscure far things
+    gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
   };
 
   render () {
@@ -135,7 +174,6 @@ export default class Scene extends React.Component<Props, State> {
 }
 
 const SceneContainer = styled.div`
-  //border: thin solid white;
   display: grid;
   grid-template-columns: 75% 25%;
   justify-content: space-between;
@@ -146,13 +184,11 @@ const SceneContainer = styled.div`
 `;
 
 const Toolpane = styled.div`
-  //border: thin solid salmon;
 `;
 
 const Canvas = styled.canvas`
    max-width: 100%;
    background-color: black;
-   //border: thin solid cornflowerblue;
    @media (max-width: ${ breakpoints.small }px) {
     max-width: 95vw;
     max-height: 55vh;

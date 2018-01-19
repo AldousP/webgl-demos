@@ -2,8 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TsConfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-require('regenerator-runtime/runtime')
-
+require('regenerator-runtime/runtime');
 
 module.exports = {
   entry: [
@@ -16,7 +15,7 @@ module.exports = {
     filename: 'app.js'
   },
   resolve: {
-    extensions: ['.js', '.ts', '.tsx', '.GLSL'],
+    extensions: [ '.js', '.ts', '.tsx', '.glsl', '.obj' ],
     plugins: [
       new webpack.ProvidePlugin({
         'regeneratorRuntime': 'regenerator-runtime/runtime'
@@ -34,20 +33,12 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.glsl$/,
-        use: 'webpack-glsl-loader'
+        test: /\.obj$/,
+        use: 'webpack-obj-loader'
       },
       {
-        test: /\.jsx?$/,
-        include: /node_modules\/react-icons/,
-        use: [
-          {
-            loader: "babel-loader",
-            query: {
-              presets: ["es2015", "react"]
-            }
-          }
-        ]
+        test: /\.glsl$/,
+        use: 'webpack-glsl-loader'
       },
       {
         test: [ /\.ts(x?)$/, /\.js$/],

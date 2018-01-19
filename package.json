@@ -43,7 +43,8 @@
     "url-loader": "^0.6.2",
     "webpack": "^3.7.1",
     "webpack-dev-server": "^2.9.3",
-    "webpack-glsl-loader": "^1.0.1"
+    "webpack-glsl-loader": "^1.0.1",
+    "webpack-obj-loader": "^1.0.4"
   },
   "dependencies": {
     "@types/react-redux": "^5.0.14",

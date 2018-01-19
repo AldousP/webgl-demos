@@ -6,6 +6,8 @@ class Scene6 extends Scene {
   }
 
   componentDidMount () {
+    super.componentDidMount();
+
     this.setState({
       editorValues: [
         new SliderValue( 'X', 0, 0, 10 ),
@@ -14,15 +16,6 @@ class Scene6 extends Scene {
         new TextValue( 'Name', 'test', 10 )
       ]
     })
-  }
-
-  /**
-   * Receive the elapsed time since the last frame.
-   *
-   * @param {number} delta
-   */
-  updateScene ( delta: number, glContext ) {
-
   }
 }
 

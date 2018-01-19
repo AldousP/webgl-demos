@@ -74,6 +74,17 @@
   version "2.0.15"
   resolved "https://registry.yarnpkg.com/@types/immutability-helper/-/immutability-helper-2.0.15.tgz#1bd2d11e850791267a6302ab86107c0b0ad01bfa"
 
+"@types/jest@^21.1.6":
+  version "21.1.10"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-21.1.10.tgz#dcacb5217ddf997a090cc822bba219b4b2fd7984"
+
+"@types/loader-utils@^1.1.0":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@types/loader-utils/-/loader-utils-1.1.1.tgz#3522ac71af49cc3e3385587c395172397d1fb1c2"
+  dependencies:
+    "@types/node" "*"
+    "@types/webpack" "*"
+
 "@types/lodash@4.14.74":
   version "4.14.74"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.74.tgz#ac3bd8db988e7f7038e5d22bd76a7ba13f876168"
@@ -89,6 +100,10 @@
 "@types/node@*", "@types/node@^8.0.46":
   version "8.0.46"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-8.0.46.tgz#6e1766b2d0ed06631d5b5f87bb8e72c8dbb6888e"
+
+"@types/node@^8.0.51":
+  version "8.5.9"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-8.5.9.tgz#7155cfb4ae405bca4dd8df1a214c339e939109bf"
 
 "@types/react-dom@^16.0.2":
   version "16.0.2"
@@ -132,6 +147,24 @@
   resolved "https://registry.yarnpkg.com/@types/shelljs/-/shelljs-0.7.0.tgz#229c157c6bc1e67d6b990e6c5e18dbd2ff58cff0"
   dependencies:
     "@types/node" "*"
+
+"@types/tapable@*":
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/@types/tapable/-/tapable-0.2.4.tgz#8181a228da46185439300e600c5ae3b3b3982585"
+
+"@types/uglify-js@*":
+  version "2.6.30"
+  resolved "https://registry.yarnpkg.com/@types/uglify-js/-/uglify-js-2.6.30.tgz#257d2b6dd86673d60da476680fba90f2e30c6eef"
+  dependencies:
+    source-map "^0.6.1"
+
+"@types/webpack@*":
+  version "3.8.3"
+  resolved "https://registry.yarnpkg.com/@types/webpack/-/webpack-3.8.3.tgz#92501a9c7e41a560aa9b354345768b7348d80764"
+  dependencies:
+    "@types/node" "*"
+    "@types/tapable" "*"
+    "@types/uglify-js" "*"
 
 abbrev@1:
   version "1.1.1"
@@ -6342,6 +6375,10 @@ wbuf@^1.1.0, wbuf@^1.7.2:
   dependencies:
     minimalistic-assert "^1.0.0"
 
+webgl-obj-loader@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/webgl-obj-loader/-/webgl-obj-loader-1.0.0.tgz#6ac2d33364c3a5eeed45c96f68f80f989dbb9127"
+
 webpack-dev-middleware@^1.11.0:
   version "1.12.0"
   resolved "https://registry.yarnpkg.com/webpack-dev-middleware/-/webpack-dev-middleware-1.12.0.tgz#d34efefb2edda7e1d3b5dbe07289513219651709"
@@ -6389,6 +6426,16 @@ webpack-glsl-loader@^1.0.1:
   dependencies:
     fs "0.0.2"
     path "^0.11.14"
+
+webpack-obj-loader@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/webpack-obj-loader/-/webpack-obj-loader-1.0.4.tgz#57b2d756f1a68357aa57bad4c979db8dd72a3740"
+  dependencies:
+    "@types/jest" "^21.1.6"
+    "@types/loader-utils" "^1.1.0"
+    "@types/node" "^8.0.51"
+    loader-utils "^1.1.0"
+    webgl-obj-loader "^1.0.0"
 
 webpack-sources@^1.0.1:
   version "1.0.1"

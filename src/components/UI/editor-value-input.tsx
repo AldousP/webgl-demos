@@ -26,12 +26,13 @@ export default class EditorValueInput extends React.Component<Props, State> {
           <Slider type="range"
                   min={ data.min }
                   max={ data.max }
+                  value={ data.value }
                   onChange={ this.props.onChange ? e => ( this.props.onChange( {
                     ...this.props.data,
                     value: e.target.value
                   } )) : null }
           />
-        )
+        );
       case EditorValueInputType.TextInput:
         data = this.props.data as TextValue;
         return (
@@ -88,6 +89,7 @@ const LabelRow = styled.div`
   display: inline-flex;
   justify-content: space-between;
   width: 100%;
+  margin-bottom: 8px;
 `;
 
 const Name = styled.div`
