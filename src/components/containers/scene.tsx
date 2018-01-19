@@ -88,8 +88,9 @@ export default class Scene extends React.Component<Props, State> {
   delta: number;
   last: number;
   gl: WebGLRenderingContext;
-  vertShader: string = require( '@app/GLSL/vertex/scene_5.glsl' );
-  fragShader: string = require( '@app/GLSL/fragment/scene_5.glsl' );
+  vertexShaderSource: string = require( '@app/GLSL/vertex/scene_5.glsl' );
+  fragmentShaderSource: string = require( '@app/GLSL/fragment/scene_5.glsl' );
+  shader: WebGLShader;
   sequencers: Array<Sequencer>;
 
   constructor ( props ) {
@@ -106,34 +107,35 @@ export default class Scene extends React.Component<Props, State> {
     this.last = new Date().getTime();
   }
 
+  buildShader = ( type: number, source: string, gl: WebGLRenderingContext ): WebGLShader => {
+    let shader: WebGLShader = gl.createShader( type );
+    gl.shaderSource( shader, source );
+    gl.compileShader( shader );
+    let success = gl.getShaderParameter( shader, gl.COMPILE_STATUS );
+    if ( success ){
+      return shader
+    }
+    console.log( gl.getShaderInfoLog( shader ) );
+    gl.deleteShader( shader );
+  };
 
   componentDidMount () {
     let canvas: HTMLCanvasElement = document.getElementById( 'scene-gl-canvas' );
     this.gl = canvas.getContext( 'webgl' );
     window.requestAnimationFrame( this.mainLoop );
-  }
+    let { gl } = this;
+    let vertexShader = this.buildShader( gl.VERTEX_SHADER, this.vertexShaderSource, gl );
+    let fragmentShader = this.buildShader( gl.FRAGMENT_SHADER, this.fragmentShaderSource, gl );
+    let program = gl.createProgram();
+    gl.attachShader( program, vertexShader );
+    gl.attachShader( program, fragmentShader );
+    gl.linkProgram( program );
 
-  renderToolPane = () => {
-    if ( this.state.toolpaneOpen ) {
-      return (
-        <Toolpane>
-          {
-            this.state.editorValues.map( ( value, i ) => {
-              return (
-                <EditorValueInput key={ i } data={ value } onChange={ newVal => {
-                  this.setState({
-                    editorValues: this.state.editorValues.map( val => {
-                      return val.name === value.name ? newVal : val
-                    })
-                  })
-                }} />
-              ) // jsx
-            } ) // map
-          }
-        </Toolpane>
-      )
+    let success = gl.getProgramParameter( program, gl.LINK_STATUS );
+    if ( success ) {
+      this.shader = program;
     }
-  };
+  }
 
   mainLoop = () => {
     let current = new Date().getTime();
@@ -159,6 +161,14 @@ export default class Scene extends React.Component<Props, State> {
     gl.enable( gl.DEPTH_TEST );           // Enable depth testing
     gl.depthFunc( gl.LEQUAL) ;            // Near things obscure far things
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
+    gl.useProgram( this.shader );
+
+    {
+      const vertexCount = 36;
+      const type = gl.UNSIGNED_SHORT;
+      const offset = 0;
+      gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
+    }
   };
 
   render () {
@@ -170,7 +180,30 @@ export default class Scene extends React.Component<Props, State> {
         />
         { this.renderToolPane() }
       </SceneContainer>
-    ) }
+    )
+  }
+
+  renderToolPane = () => {
+    if ( this.state.toolpaneOpen ) {
+      return (
+        <Toolpane>
+          {
+            this.state.editorValues.map( ( value, i ) => {
+              return (
+                <EditorValueInput key={ i } data={ value } onChange={ newVal => {
+                  this.setState({
+                    editorValues: this.state.editorValues.map( val => {
+                      return val.name === value.name ? newVal : val
+                    })
+                  })
+                }} />
+              ) // jsx
+            } ) // map
+          }
+        </Toolpane>
+      )
+    }
+  };
 }
 
 const SceneContainer = styled.div`

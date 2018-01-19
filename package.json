@@ -20,6 +20,7 @@
     "@types/react-dom": "^16.0.2",
     "@types/react-icons": "^2.2.4",
     "@types/redux-persist": "^4.3.1",
+    "@types/webgl-ext": "^0.0.29",
     "ava": "^0.22.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
