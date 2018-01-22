@@ -18,13 +18,13 @@ const Container = styled.div`
   background-color: ${ props => props.theme.background };
   color: ${ props => props.theme.color };
   height: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
 `;
 
 class AppWrapper extends React.Component<Props, State> {
   render() {
     return (
-      <ThemeProvider theme={ lightTheme }>
+      <ThemeProvider theme={ darkTheme }>
         <Container>
           <Header/>
           <AppContent>
