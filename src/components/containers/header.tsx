@@ -12,6 +12,7 @@ const HeaderContainer = styled.div`
   display: grid;
   grid-template-columns: 45vw 64px;
   justify-content: space-between;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 `;
 
 const Col = styled.div`

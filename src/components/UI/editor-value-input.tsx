@@ -75,6 +75,7 @@ const ValueWrapper = styled.div`
   margin: 4px;
   padding: 8px;
   color: ${ props => props.theme.color };
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 `;
 
 const InputRow = styled.div`
@@ -112,6 +113,8 @@ const TextInput = styled.input`
   border-radius: 3px;
   border: none;
   font-size: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+
   
   :focus {
     outline: none;

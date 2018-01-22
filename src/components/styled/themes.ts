@@ -9,7 +9,7 @@ export interface AppTheme {
 }
 
 const lightTheme: AppTheme = {
-  background: 'white',
+  background: '#f3f3f3',
   color: 'black',
   trimColor: '#e3e3e3',
   headerBackground: '#fbfbfb',

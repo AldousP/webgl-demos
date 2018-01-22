@@ -1,6 +1,14 @@
-import Scene, { EditorValue, EditorValueInputType, SliderValue, TextValue } from '@app/components/containers/scene';
+import Scene, {
+  EditorValue, EditorValueInputType, SceneProps, SliderValue,
+  TextValue
+} from '@app/components/containers/scene';
 
-class Scene6 extends Scene {
+
+export interface Props extends SceneProps {
+
+}
+
+class Scene6 extends Scene<Props> {
   constructor ( props ) {
     super ( props );
   }

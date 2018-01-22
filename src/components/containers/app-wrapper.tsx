@@ -24,7 +24,7 @@ const Container = styled.div`
 class AppWrapper extends React.Component<Props, State> {
   render() {
     return (
-      <ThemeProvider theme={ darkTheme }>
+      <ThemeProvider theme={ lightTheme }>
         <Container>
           <Header/>
           <AppContent>
