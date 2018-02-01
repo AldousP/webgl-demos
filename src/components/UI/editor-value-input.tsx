@@ -1,7 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import breakpoints from '@app/components/styled/breakpoints';
-import { EditorValue, EditorValueInputType, SliderValue, TextValue } from "@app/components/containers/scene";
+import {
+  EditorValue, EditorValueInputType, SelectOption, SelectValue, SliderValue,
+  TextValue
+} from "@app/components/containers/scene";
 
 export type State = {
 
@@ -9,7 +12,8 @@ export type State = {
 
 export type Props = {
   data: EditorValue,
-  onChange?: Function
+  value: number,
+  onChange?: ( EditorValue ) => void
 }
 
 export default class EditorValueInput extends React.Component<Props, State> {
@@ -26,11 +30,9 @@ export default class EditorValueInput extends React.Component<Props, State> {
           <Slider type="range"
                   min={ data.min }
                   max={ data.max }
-                  value={ data.value }
-                  onChange={ this.props.onChange ? e => ( this.props.onChange( {
-                    ...this.props.data,
-                    value: e.target.value
-                  } )) : null }
+                  step={ data.increment }
+                  value={ this.props.value }
+                  onChange={ e => this.props.onChange( e.target.value ) }
           />
         );
       case EditorValueInputType.TextInput:
@@ -38,17 +40,25 @@ export default class EditorValueInput extends React.Component<Props, State> {
         return (
           <TextInput type="text"
                   maxLength={ data.max }
-                  onChange={ this.props.onChange ? e => (this.props.onChange( {
-                    ...this.props.data,
-                    value: e.target.value
-                  } )) : null }
+                  onChange={ this.props.onChange ? e => ( this.props.onChange( e.target.value ) ) : null }
           />
+        );
+      case EditorValueInputType.SelectInput:
+        data = this.props.data as SelectValue<any>;
+        return (
+          <SelectInput value={ this.props.value } onChange={ this.props.onChange ? e => ( this.props.onChange( e.target.value ) ) : null }>
+            {
+              data.options.map(
+                ( option: SelectOption<any>, index: number ) =>
+                  <option value={ option.value } key={ index }> { option.name } </option> )
+            }
+          </SelectInput>
         )
     }
   }
 
   render () {
-    let { name, value, type } = this.props.data;
+    let { name, type } = this.props.data;
     return (
       <ValueWrapper>
         <LabelRow>
@@ -56,7 +66,7 @@ export default class EditorValueInput extends React.Component<Props, State> {
             { name }
           </Name>
           <Value>
-            { type === EditorValueInputType.SliderInput ? value : '' }
+            { type === EditorValueInputType.SliderInput ? this.props.value  : '' }
           </Value>
         </LabelRow>
         <InputRow>
@@ -115,6 +125,22 @@ const TextInput = styled.input`
   font-size: 12px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 
+  
+  :focus {
+    outline: none;
+  }
+`;
+
+const SelectInput = styled.select`
+  background-color: ${ props => props.theme.background };
+  color: ${ props => props.theme.color };
+  outline: none;
+  padding: 3px;
+  border-radius: 3px;
+  border: none;
+  font-size: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  width: 100%;
   
   :focus {
     outline: none;

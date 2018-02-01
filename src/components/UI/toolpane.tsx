@@ -23,7 +23,6 @@ class ToolPane extends React.Component<Props, State> {
 
   }
 
-
   render() {
     return (
       <Pane>

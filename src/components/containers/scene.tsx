@@ -15,12 +15,13 @@ window.mat4 = mat4;
 export enum EditorValueInputType {
   TextInput,
   SliderInput,
-  ToggleInput
+  ToggleInput,
+  SelectInput
 }
 
 export interface EditorValue {
   name: string;
-  value: boolean | string | number;
+  value: any;
   type: EditorValueInputType;
 }
 
@@ -30,12 +31,14 @@ export class SliderValue implements EditorValue {
   value: number;
   min: number;
   max: number;
+  increment: number;
 
-  constructor ( name: string, value: number, min: number, max: number ) {
+  constructor ( name: string, value: number, min: number, max: number, incr?: number ) {
     this.name = name;
     this.value = value;
     this.min = min;
     this.max = max;
+    this.increment = incr ? incr : .1;
     this.type = EditorValueInputType.SliderInput;
   }
 }
@@ -60,6 +63,25 @@ export class ToggleValue implements EditorValue {
   value: boolean;
 }
 
+export type SelectOption<T> = {
+  name: string,
+  value: T
+}
+
+export class SelectValue<T> implements EditorValue {
+  type: EditorValueInputType.SelectInput;
+  name: string;
+  value: T;
+  options: SelectOption<T>[];
+
+  constructor ( name: string, value: T, options: SelectOption<T>[] ) {
+    this.name = name;
+    this.value = value;
+    this.options = options;
+    this.type = EditorValueInputType.SelectInput;
+  }
+}
+
 export interface SceneProps {
   parentProp?: boolean
 }
@@ -70,6 +92,15 @@ export type State = {
   canvas_w: number,
   canvas_h: number,
   editorValues: Array<EditorValue>,
+  editorData: {
+    CamX: number,
+    CamY: number,
+    CamZ: number,
+    RotX: number,
+    RotY: number,
+    RotZ: number,
+    Draw_Type: number
+  },
   paused: boolean
 }
 
@@ -137,7 +168,7 @@ class Entity {
 
 const sampleEntity: Entity = {
   mesh: {
-    modelData: require( 'static/models/cube.obj' ).default
+    modelData: require( 'static/models/suze.obj' ).default
   }
 };
 
@@ -248,6 +279,15 @@ export default class Scene<P> extends React.Component<P, State> {
       canvas_w: 640,
       canvas_h: 360,
       editorValues: [],
+      editorData: {
+        CamX: 0,
+        CamY: 0,
+        CamZ: 5,
+        RotX: 0,
+        RotY: 0,
+        RotZ: 0,
+        Draw_Type: 1
+      },
       paused: false,
     };
 
@@ -270,32 +310,7 @@ export default class Scene<P> extends React.Component<P, State> {
     initializeShader( this.shaders.defaultShader, gl );
     // bindShaderData( this.shaders.defaultShader, defaultShaderContext, sampleEntity, gl );
 
-    const fieldOfView = 45 * Math.PI / 180;
-    const aspect = 1.6;
-    const zNear = 0.1;
-    const zFar = 100.0;
-    const camX = 0;
-    const camY = 0;
-    const camZ = -12.0;
-    
     this.transform = mat4.create();
-    mat4.perspective(
-      this.transform,
-      fieldOfView,
-      aspect,
-      zNear,
-      zFar
-    );
-
-    mat4.translate(
-      this.transform,     // destination matrix
-      this.transform,     // matrix to translate
-      [
-        -camX,
-        -camY,
-        camZ
-      ]
-    );
 
     // amount to translate
     this.indicesBuffer = gl.createBuffer();
@@ -324,7 +339,32 @@ export default class Scene<P> extends React.Component<P, State> {
   };
 
   updateScene = ( delta: number ) => {
+    const fieldOfView = 45 * Math.PI / 180;
+    const aspect = 1.6;
+    const zNear = 0.1;
+    const zFar = 100.0;
 
+    let { CamX, CamY, CamZ, RotX, RotY, RotZ } = this.state.editorData;
+    //
+    mat4.perspective(
+      this.transform,
+      fieldOfView,
+      aspect,
+      zNear,
+      zFar
+    );
+    mat4.rotateX( this.transform, this.transform, RotX );
+    mat4.rotateY( this.transform, this.transform, RotY );
+    mat4.rotateZ( this.transform, this.transform, RotZ );
+    mat4.translate(
+      this.transform,     // destination matrix
+      this.transform,     // matrix to translate
+      [
+        CamX,
+        -CamY,
+        -CamZ
+      ]
+    );
   };
 
   renderScene = ( delta: number, gl: WebGLRenderingContext ) => {
@@ -368,7 +408,7 @@ export default class Scene<P> extends React.Component<P, State> {
       const vertexCount = sampleEntity.mesh.modelData.indices.length;
       const type = gl.UNSIGNED_SHORT;
       const offset = 0;
-      gl.drawElements(gl.LINE_LOOP, vertexCount, type, offset);
+      gl.drawElements( this.state.editorData.Draw_Type, vertexCount, type, offset );
     }
 
     // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indicesBuffer );
@@ -409,11 +449,12 @@ export default class Scene<P> extends React.Component<P, State> {
           {
             this.state.editorValues.map( ( value, i ) => {
               return (
-                <EditorValueInput key={ i } data={ value } onChange={ newVal => {
+                <EditorValueInput key={ i } data={ value } value={ this.state.editorData[ value.name ] } onChange={ ( newVal: any ) => {
                   this.setState({
-                    editorValues: this.state.editorValues.map( val => {
-                      return val.name === value.name ? newVal : val
-                    })
+                    editorData: {
+                      ...this.state.editorData,
+                      [ value.name ]: newVal
+                    }
                   })
                 }} />
               ) // jsx
