@@ -353,9 +353,6 @@ export default class Scene<P> extends React.Component<P, State> {
       zNear,
       zFar
     );
-    mat4.rotateX( this.transform, this.transform, RotX );
-    mat4.rotateY( this.transform, this.transform, RotY );
-    mat4.rotateZ( this.transform, this.transform, RotZ );
     mat4.translate(
       this.transform,     // destination matrix
       this.transform,     // matrix to translate
@@ -365,6 +362,9 @@ export default class Scene<P> extends React.Component<P, State> {
         -CamZ
       ]
     );
+    mat4.rotateX( this.transform, this.transform, RotX );
+    mat4.rotateY( this.transform, this.transform, RotY );
+    mat4.rotateZ( this.transform, this.transform, RotZ );
   };
 
   renderScene = ( delta: number, gl: WebGLRenderingContext ) => {
