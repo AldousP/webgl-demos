@@ -32,7 +32,7 @@ export default class EditorValueInput extends React.Component<Props, State> {
                   max={ data.max }
                   step={ data.increment }
                   value={ this.props.value }
-                  onChange={ e => this.props.onChange( e.target.value ) }
+                  onChange={ e => this.props.onChange( Math.round( parseFloat( e.target.value ) * 100) / 100 ) }
           />
         );
       case EditorValueInputType.TextInput:
