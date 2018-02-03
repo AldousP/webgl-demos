@@ -168,7 +168,7 @@ class Entity {
 
 const sampleEntity: Entity = {
   mesh: {
-    modelData: require( 'static/models/suze.obj' ).default
+    modelData: require( 'static/models/icosphere.obj' ).default
   }
 };
 
