@@ -1,13 +1,13 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import breakpoints from '@app/components/styled/breakpoints';
 import { ChromePicker } from 'react-color';
 
-import {
-  ColorValue,
-  EditorValue, EditorValueInputType, SelectOption, SelectValue, SliderValue,
-  TextValue
-} from "@app/components/containers/scene";
+import EditorValue from '@app/types/editor-values/interface-editor-value';
+import EditorValueInputType from '@app/types/editor-values/editor-value-type';
+import TextValue from '@app/types/editor-values/text-value';
+import { SelectOption, SelectValue } from '@app/types/editor-values/select-value';
+import ColorValue from '@app/types/editor-values/color-value';
+import SliderValue from '@app/types/editor-values/slider-value';
 
 export type State = {
 

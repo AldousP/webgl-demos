@@ -1,9 +1,7 @@
-import Scene, {
-  ColorValue,
-  EditorValue, EditorValueInputType, SceneProps, SelectValue, SliderValue,
-  TextValue
-} from '@app/components/containers/scene';
-
+import Scene, { SceneProps } from '@app/components/containers/scene';
+import ColorValue from '@app/types/editor-values/color-value';
+import SliderValue from '@app/types/editor-values/slider-value';
+import { SelectValue } from '@app/types/editor-values/select-value';
 
 export interface Props extends SceneProps {
 

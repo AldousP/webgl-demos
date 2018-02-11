@@ -7,101 +7,11 @@ import breakpoints from '@app/components/styled/breakpoints';
 import EditorValueInput from "@app/components/UI/editor-value-input";
 import { Sequencer, SequenceType } from '@app/util/sequencer';
 import { degToRad, radToDeg, isPowerOf2, randRange } from '@app/util/math';
+import EditorValue from '@app/types/editor-values/interface-editor-value';
 
 const window = require( 'window' );
 const document = window.document;
 window.mat4 = mat4;
-
-export enum EditorValueInputType {
-  TextInput,
-  SliderInput,
-  ToggleInput,
-  SelectInput,
-  ColorInput
-}
-
-export interface EditorValue {
-  name: string;
-  value: any;
-  type: EditorValueInputType;
-}
-
-export class SliderValue implements EditorValue {
-  type: EditorValueInputType;
-  name: string;
-  value: number;
-  min: number;
-  max: number;
-  increment: number;
-
-  constructor ( name: string, value: number, min: number, max: number, incr?: number ) {
-    this.name = name;
-    this.value = value;
-    this.min = min;
-    this.max = max;
-    this.increment = incr ? incr : .1;
-    this.type = EditorValueInputType.SliderInput;
-  }
-}
-
-export class TextValue implements EditorValue {
-  type: EditorValueInputType;
-  name: string;
-  value: string;
-  max: number;
-
-  constructor ( name: string, value: string, max: number ) {
-    this.name = name;
-    this.value = value;
-    this.max = max;
-    this.type = EditorValueInputType.TextInput;
-  }
-}
-
-export type Color = {
-  r: number,
-  g: number,
-  b: number,
-  a: number
-}
-
-export class ColorValue implements EditorValue {
-  type: EditorValueInputType;
-  name: string;
-  value: string | Color;
-
-  constructor ( name: string, value: string | Color ) {
-    this.name = name;
-    this.value = value;
-    this.type = EditorValueInputType.ColorInput;
-  }
-}
-
-
-export class ToggleValue implements EditorValue {
-  type: EditorValueInputType.ToggleInput;
-  name: string;
-  value: boolean;
-}
-
-export type SelectOption<T> = {
-  name: string,
-  value: T
-}
-
-export class SelectValue<T> implements EditorValue {
-  type: EditorValueInputType.SelectInput;
-  name: string;
-  value: T;
-  options: SelectOption<T>[];
-
-  constructor ( name: string, value: T, options: SelectOption<T>[] ) {
-    this.name = name;
-    this.value = value;
-    this.options = options;
-    this.type = EditorValueInputType.SelectInput;
-  }
-}
 
 export interface SceneProps {
   parentProp?: boolean
@@ -560,7 +470,6 @@ const Canvas = styled.canvas`
    box-shadow: rgba(89,89,89,0.49) 0 0 3px;
    @media (max-width: ${ breakpoints.small }px) {
     max-width: 84vw;
-    //max-height: 55vh;
   }
 `;
 
