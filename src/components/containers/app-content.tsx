@@ -9,6 +9,11 @@ const ContentContainer = styled.div`
   padding: 16px;
   display: grid;
   justify-content: center;
+  border: thin solid #ff8cb9;
+  overflow-y: auto;
+ 
+  margin-top: ${ props => props.theme.headerHeight };
+
   @media (max-width: ${ breakpoints.small }px) {
     padding: 16px;
   }

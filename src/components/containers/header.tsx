@@ -1,55 +1,85 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-export type Props = {}
-export type State = {}
-
 import FaGithub = require("react-icons/lib/fa/github");
+import MdMenu = require("react-icons/lib/md/menu");
+import { shadowMixin } from '@app/util/styleMixins';
+import { Creators } from '@app/actions';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import AppConfig from '@app/appConfig';
 
-const HeaderContainer = styled.div`
-  height: 50px;
-  background-color: ${ props => props.theme.headerBackground};
-  display: grid;
-  grid-template-columns: 45vw 64px;
-  justify-content: space-between;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-`;
-
-const Col = styled.div`
-  grid-row: 1;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 8px;
-`;
-
-const Logo = Col.extend`
-  margin-left: 16px;
-  justify-content: flex-start;
-`;
-
-const Link = styled.a`
-  font-size: 28px;
-  color: white;
-  text-decoration: none;
-`;
+export type Props = {
+  AppSetNavOpen: typeof Creators.AppSetNavOpen,
+  navOpen: boolean
+}
+export type State = {}
 
 class Header extends React.Component<Props, State > {
   render() {
     return (
       <HeaderContainer>
-        <Logo>
-          WebGL demos
-        </Logo>
-        <Col>
-          <Link target="_blank" href="https://github.com/AldousP/webgl-demos">
+        <MenuWrapper>
+          <MdMenu onClick={ () => this.props.AppSetNavOpen( !this.props.navOpen ) }/>
+          <Title>{ AppConfig.title }</Title>
+        </MenuWrapper>
+        <LinkWrapper>
+          <a target="_blank" href={ AppConfig.url }>
             <FaGithub/>
-          </Link>
-        </Col>
+          </a>
+        </LinkWrapper>
       </HeaderContainer>
-  );
+    );
   }
 }
 
-export default Header;
+const HeaderContainer = styled.div`
+  max-width: 100vw;
+  font-family: 'Noto', serif;
+  display: grid;
+  font-family: ${ props => props.theme.type.headerFont };
+  grid-template-columns: 164px 64px;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  padding-left: 8px;
+  padding-right: 8px;
+  z-index: 3;
+  box-shadow: ${ shadowMixin( 1 ) };
+`;
+
+const LinkWrapper = styled.div`
+  a {
+    color: ${ props => props.theme.color };
+    font-size: 24px;
+    &:active {
+      color: ${ props => props.theme.color };
+    }
+  } 
+`;
+
+const MenuWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  color: ${ props => props.theme.color };
+`;
+
+const Title = styled.div`
+  margin-left: 8px;
+`;
+
+const mapStateToProps = ( state ) => {
+  return {
+    navOpen: state.app.navOpen
+  }
+};
+
+const mapDispatchToProps = ( dispatch ) =>
+  bindActionCreators( Creators, dispatch );
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)( Header );

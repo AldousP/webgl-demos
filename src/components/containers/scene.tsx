@@ -16,7 +16,8 @@ export enum EditorValueInputType {
   TextInput,
   SliderInput,
   ToggleInput,
-  SelectInput
+  SelectInput,
+  ColorInput
 }
 
 export interface EditorValue {
@@ -56,6 +57,26 @@ export class TextValue implements EditorValue {
     this.type = EditorValueInputType.TextInput;
   }
 }
+
+export type Color = {
+  r: number,
+  g: number,
+  b: number,
+  a: number
+}
+
+export class ColorValue implements EditorValue {
+  type: EditorValueInputType;
+  name: string;
+  value: string | Color;
+
+  constructor ( name: string, value: string | Color ) {
+    this.name = name;
+    this.value = value;
+    this.type = EditorValueInputType.ColorInput;
+  }
+}
+
 
 export class ToggleValue implements EditorValue {
   type: EditorValueInputType.ToggleInput;
@@ -99,6 +120,7 @@ export type State = {
     RotX: number,
     RotY: number,
     RotZ: number,
+    FOV: number,
     Draw_Type: number
   },
   paused: boolean
@@ -163,14 +185,33 @@ class ObjMesh {
 }
 
 class Entity {
+  transform: mat4;
   mesh: ObjMesh;
 }
 
-const sampleEntity: Entity = {
+const sphereEntity: Entity = {
+  transform: mat4.create(),
   mesh: {
     modelData: require( 'static/models/icosphere.obj' ).default
   }
 };
+
+const cubeEntity: Entity = {
+  transform: mat4.create(),
+  mesh: {
+    modelData: require( 'static/models/cube.obj' ).default
+  }
+};
+
+mat4.translate(
+  cubeEntity.transform,     // destination matrix
+  cubeEntity.transform,     // matrix to translate
+  [
+    0,
+    0,
+    0
+  ]
+);
 
 const position = ( entity ): vec4 => {
   return entity.mesh.modelData.vertices;
@@ -185,37 +226,8 @@ const defaultShaderContext = {
   transform
 };
 
-const bindShaderData = ( shader: Shader, shaderContext: Object, entity: Entity, gl: WebGLRenderingContext) => {
-  const components = 4;
-  const type = gl.FLOAT;
-  const normalize = false;
-  const stride = 0;
-  const offset = 0;
-  let { attributes, uniforms } = shader;
-
-  Object.keys( attributes ).map( key => {
-    let { buffer, location } = attributes[ key ];
-    gl.bindBuffer( gl.ARRAY_BUFFER, buffer );
-    gl.bufferData(
-      gl.ARRAY_BUFFER,
-      new Float32Array( shaderContext[ key ]( entity ) ),
-      gl.STATIC_DRAW
-    );
-    gl.vertexAttribPointer(
-      location,
-      components,
-      type,
-      normalize,
-      stride,
-      offset
-    );
-
-    gl.enableVertexAttribArray( location );
-  } );
-};
-
 /**
- * Loads the source URLS on the provided shader, compiles and links them.
+ * Compiles and links shader data.
  * @param {Shader} shader
  * @param {WebGLRenderingContext} gl
  */
@@ -256,6 +268,52 @@ const initializeShader = ( shader: Shader, gl: WebGLRenderingContext ) => {
   }
 };
 
+const setShaderData = ( gl: WebGLRenderingContext, shader: Shader, entity: Entity, transform: mat4 ) => {
+  let attributes = shader.attributes as any;
+  let uniforms = shader.uniforms as any;
+  gl.uniformMatrix4fv(
+    uniforms.transform.location,
+    false,
+    transform
+  );
+
+  {
+    // Indicates the number of values in each element in the buffer
+    // 3D positions will have 3 components each.
+    const numComponents = 3;
+    const type = gl.FLOAT;
+    const normalize = false;
+    const stride = 0;
+    const offset = 0;
+
+    gl.bindBuffer( gl.ARRAY_BUFFER, attributes.position.buffer );
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array( entity.mesh.modelData.vertices ),
+      gl.STATIC_DRAW
+    );
+    gl.vertexAttribPointer(
+      attributes.position.location,
+      numComponents,
+      type,
+      normalize,
+      stride,
+      offset
+    );
+    gl.enableVertexAttribArray( attributes.position.location );
+  }
+
+  {
+    gl.bindBuffer( gl.ELEMENT_ARRAY_BUFFER, shader.indexBuffer );
+    gl.bufferData(
+      gl.ELEMENT_ARRAY_BUFFER,
+      new Uint16Array( entity.mesh.modelData.indices ),
+      gl.STATIC_DRAW
+    );
+  }
+};
+
+
 export default class Scene<P> extends React.Component<P, State> {
   delta: number;
   last: number;
@@ -264,6 +322,7 @@ export default class Scene<P> extends React.Component<P, State> {
   sequencers: Array<Sequencer>;
   camera: Camera;
   transform: mat4;
+  shaderTransform: mat4;
   shaders: {
     defaultShader: DefaultShader
   };
@@ -282,11 +341,12 @@ export default class Scene<P> extends React.Component<P, State> {
       editorData: {
         CamX: 0,
         CamY: 0,
-        CamZ: 5,
+        CamZ: 7.75,
         RotX: 0,
         RotY: 0,
         RotZ: 0,
-        Draw_Type: 1
+        FOV: 48,
+        Draw_Type: 3
       },
       paused: false,
     };
@@ -298,7 +358,8 @@ export default class Scene<P> extends React.Component<P, State> {
     };
 
     this.entities = [
-      sampleEntity
+      cubeEntity,
+      sphereEntity
     ];
   }
 
@@ -306,21 +367,10 @@ export default class Scene<P> extends React.Component<P, State> {
     let canvas: HTMLCanvasElement = document.getElementById( 'scene-gl-canvas' );
     this.gl = canvas.getContext( 'webgl' );
     let { gl } = this;
-
     initializeShader( this.shaders.defaultShader, gl );
-    // bindShaderData( this.shaders.defaultShader, defaultShaderContext, sampleEntity, gl );
-
     this.transform = mat4.create();
-
-    // amount to translate
+    this.shaderTransform = mat4.create();
     this.indicesBuffer = gl.createBuffer();
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.shaders.defaultShader.attributes.position.buffer );
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array( sampleEntity.mesh.modelData.vertices ), gl.STATIC_DRAW);
-
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indicesBuffer );
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array( sampleEntity.mesh.modelData.indices ), gl.STATIC_DRAW);
-
     window.requestAnimationFrame( this.mainLoop );
   }
 
@@ -334,18 +384,16 @@ export default class Scene<P> extends React.Component<P, State> {
     }
 
     this.renderScene( this.delta, this.gl );
-
     window.requestAnimationFrame( this.mainLoop );
   };
 
   updateScene = ( delta: number ) => {
-    const fieldOfView = 45 * Math.PI / 180;
+    let { FOV, CamX, CamY, CamZ, RotX, RotY, RotZ } = this.state.editorData;
+    const fieldOfView = FOV * Math.PI / 180;
     const aspect = 1.6;
     const zNear = 0.1;
     const zFar = 100.0;
 
-    let { CamX, CamY, CamZ, RotX, RotY, RotZ } = this.state.editorData;
-    //
     mat4.perspective(
       this.transform,
       fieldOfView,
@@ -353,6 +401,11 @@ export default class Scene<P> extends React.Component<P, State> {
       zNear,
       zFar
     );
+
+    mat4.rotateX( this.transform, this.transform, RotX );
+    mat4.rotateY( this.transform, this.transform, RotY );
+    mat4.rotateZ( this.transform, this.transform, RotZ );
+
     mat4.translate(
       this.transform,     // destination matrix
       this.transform,     // matrix to translate
@@ -362,9 +415,11 @@ export default class Scene<P> extends React.Component<P, State> {
         -CamZ
       ]
     );
-    mat4.rotateX( this.transform, this.transform, RotX );
-    mat4.rotateY( this.transform, this.transform, RotY );
-    mat4.rotateZ( this.transform, this.transform, RotZ );
+
+    mat4.rotateX( cubeEntity.transform, cubeEntity.transform, Math.PI / 6 * delta );
+    mat4.rotateX( sphereEntity.transform, sphereEntity.transform, Math.PI / 16 * delta );
+    mat4.rotateY( sphereEntity.transform, sphereEntity.transform, Math.PI / 16 * delta );
+    mat4.rotateZ( sphereEntity.transform, sphereEntity.transform, Math.PI / 16 * delta );
   };
 
   renderScene = ( delta: number, gl: WebGLRenderingContext ) => {
@@ -375,59 +430,75 @@ export default class Scene<P> extends React.Component<P, State> {
     gl.depthFunc( gl.LEQUAL) ;            // Near things obscure far things
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
     gl.useProgram( this.shaders.defaultShader.program );
+    const { defaultShader } = this.shaders;
+
+    this.entities.forEach( entity => {
+      mat4.identity( this.shaderTransform );
+      mat4.mul( this.shaderTransform, this.transform, entity.transform );
+      setShaderData( gl, defaultShader, entity, this.shaderTransform );
+      {
+        const vertexCount = entity.mesh.modelData.indices.length;
+        const type = gl.UNSIGNED_SHORT;
+        const offset = 0;
+        gl.drawElements(
+          this.state.editorData.Draw_Type,
+          vertexCount,
+          type,
+          offset
+        );
+      }
+    } );
+
+    // Draw the axis lines
+    const numComponents = 3;
+    const type = gl.FLOAT;
+    const normalize = false;
+    const stride = 0;
+    const offset = 0;
 
     gl.uniformMatrix4fv(
-      this.shaders.defaultShader.uniforms.transform.location,
+      defaultShader.uniforms.transform.location,
       false,
       this.transform
     );
 
-    {
-      // Indicates the number of values in each element in the buffer
-      // 3D positions will have 3 components each.
-      const numComponents = 3;
-      const type = gl.FLOAT;
-      const normalize = false;
-      const stride = 0;
-      const offset = 0;
+    gl.bindBuffer( gl.ARRAY_BUFFER, defaultShader.attributes.position.buffer );
+    gl.vertexAttribPointer(
+      defaultShader.attributes.position.location,
+      numComponents,
+      type,
+      normalize,
+      stride,
+      offset
+    );
+    gl.enableVertexAttribArray( defaultShader.attributes.position.location );
+    gl.bindBuffer( gl.ELEMENT_ARRAY_BUFFER, defaultShader.indexBuffer );
+    mat4.identity( this.shaderTransform );
 
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.shaders.defaultShader.attributes.position.buffer );
-      gl.vertexAttribPointer(
-        this.shaders.defaultShader.attributes.position.location,
-        numComponents,
-        type,
-        normalize,
-        stride,
-        offset);
-      gl.enableVertexAttribArray( this.shaders.defaultShader.attributes.position.location );
-    }
+    for ( let i = 0; i < 3; i++ ) {
+      gl.bufferData(
+        gl.ARRAY_BUFFER,
+        new Float32Array(
+          [
+            0, 0, 0,
+            0 + ( i === 0 ? 10000 : 0 ),
+            0 + ( i === 1 ? 10000 : 0 ),
+            0 + ( i === 2 ? 10000 : 0 ),
+          ]
+        ),
+        gl.STATIC_DRAW
+      );
 
-    gl.bindBuffer( gl.ELEMENT_ARRAY_BUFFER, this.indicesBuffer );
-
-    {
-      const vertexCount = sampleEntity.mesh.modelData.indices.length;
+      const vertexCount = 2;
       const type = gl.UNSIGNED_SHORT;
       const offset = 0;
-      gl.drawElements( this.state.editorData.Draw_Type, vertexCount, type, offset );
+      // gl.drawElements(
+      //   this.state.editorData.Draw_Type,
+      //   vertexCount,
+      //   type,
+      //   offset
+      // );
     }
-
-    // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indicesBuffer );
-
-    // {
-    //   const vertexCount = sampleEntity.mesh.modelData.indices.length;
-    //   const type = gl.UNSIGNED_SHORT;
-    //   const offset = 0;
-    //   gl.drawElements( gl.TRIANGLES, vertexCount, type, offset );
-    // }
-
-
-    // this.entities.forEach( entity  =>  {
-    //   {
-    //     const vertexCount = entity.mesh.modelData.vertices.length / 4;
-    //     const offset = 0;
-    //     gl.drawArrays( gl.LINE_LOOP, offset, vertexCount );
-    //   }
-    // });
   };
 
   render () {
@@ -469,6 +540,9 @@ export default class Scene<P> extends React.Component<P, State> {
 const SceneContainer = styled.div`
   display: grid;
   grid-template-columns: 75% 25%;
+  margin: auto;
+  margin-top: 32px;
+  max-width: 855px;
   justify-content: space-between;
   @media (max-width: ${ breakpoints.small }px) {
     grid-template-columns: 1fr;
@@ -485,8 +559,8 @@ const Canvas = styled.canvas`
    border-radius: 5px;
    box-shadow: rgba(89,89,89,0.49) 0 0 3px;
    @media (max-width: ${ breakpoints.small }px) {
-    max-width: 95vw;
-    max-height: 55vh;
+    max-width: 84vw;
+    //max-height: 55vh;
   }
 `;
 

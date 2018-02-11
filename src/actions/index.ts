@@ -1,13 +1,14 @@
 export const Types =  {
-  APP_EXAMPLE_ACTION: 'APP_EXAMPLE_ACTION'
+  APP_SET_NAV_OPEN: 'APP_SET_NAV_OPEN'
 };
 
-export const AppExampleAction = () => {
+export const AppSetNavOpen = ( open: boolean ) => {
   return {
-    type: Types.APP_EXAMPLE_ACTION
+    type: Types.APP_SET_NAV_OPEN,
+    navOpen: open
   }
 };
 
 export const Creators =  {
-  AppExampleAction
+  AppSetNavOpen
 };

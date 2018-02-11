@@ -1,4 +1,5 @@
 import Scene, {
+  ColorValue,
   EditorValue, EditorValueInputType, SceneProps, SelectValue, SliderValue,
   TextValue
 } from '@app/components/containers/scene';
@@ -18,13 +19,20 @@ class Scene6 extends Scene<Props> {
 
     this.setState({
       editorValues: [
-        new SliderValue( 'CamX', 0, -64, 64 ),
-        new SliderValue( 'CamY', 0, -64, 64 ),
-        new SliderValue( 'CamZ', 0, -64, 64 ),
+        new ColorValue( 'Background', {
+          r: 0.1,
+          g: 0.15,
+          b: 0.25,
+          a: 1.0
+        } ),
+        new SliderValue( 'CamX', 0, -64, 64, 0.25),
+        new SliderValue( 'CamY', 0, -64, 64, 0.25),
+        new SliderValue( 'CamZ', 0, -64, 64, 0.25),
         new SliderValue( 'RotX', 0, -Math.PI, Math.PI ),
         new SliderValue( 'RotY', 0, -Math.PI, Math.PI ),
         new SliderValue( 'RotZ', 0, -Math.PI, Math.PI ),
-        new SelectValue<number>( 'Draw_Type', 1, [
+        new SliderValue( 'FOV', 48, 16, 128 ),
+        new SelectValue<number>( 'Draw_Type', 3, [
           {
             name: 'Lines',
             value: 1

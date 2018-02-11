@@ -1,19 +1,19 @@
 import { Types } from '@app/actions'
 
 export type AppState = {
-  exampleSwitch: boolean
+  navOpen: boolean
 }
 
 const INITIAL_STATE = {
-  exampleSwitch: false
+  navOpen: false
 };
 
 const app = ( state: AppState = INITIAL_STATE, action ) => {
   switch ( action.type ) {
-    case Types.APP_EXAMPLE_ACTION:
+    case Types.APP_SET_NAV_OPEN:
       return {
         ...state,
-        exampleSwitch: !state.exampleSwitch
+        navOpen: action.navOpen
       };
     default:
       return state;

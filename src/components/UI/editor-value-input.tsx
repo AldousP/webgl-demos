@@ -1,7 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import breakpoints from '@app/components/styled/breakpoints';
+import { ChromePicker } from 'react-color';
+
 import {
+  ColorValue,
   EditorValue, EditorValueInputType, SelectOption, SelectValue, SliderValue,
   TextValue
 } from "@app/components/containers/scene";
@@ -46,13 +49,18 @@ export default class EditorValueInput extends React.Component<Props, State> {
       case EditorValueInputType.SelectInput:
         data = this.props.data as SelectValue<any>;
         return (
-          <SelectInput value={ this.props.value } onChange={ this.props.onChange ? e => ( this.props.onChange( e.target.value ) ) : null }>
+          <SelectInput defaultValue={ '2' } onChange={ this.props.onChange ? e => ( this.props.onChange( e.target.value ) ) : null }>
             {
               data.options.map(
                 ( option: SelectOption<any>, index: number ) =>
                   <option value={ option.value } key={ index }> { option.name } </option> )
             }
           </SelectInput>
+        );
+      case EditorValueInputType.ColorInput:
+        data = this.props.data as ColorValue;
+        return (
+          <div>Color Picker</div>
         )
     }
   }
@@ -66,7 +74,10 @@ export default class EditorValueInput extends React.Component<Props, State> {
             { name }
           </Name>
           <Value>
-            { type === EditorValueInputType.SliderInput ? this.props.value  : '' }
+            {
+              type === EditorValueInputType.SliderInput ?
+                <SliderDirectInput type="number" step={ 0.1 } value={ this.props.value } onChange={ e => this.props.onChange( e.target.value )}/> : ''
+            }
           </Value>
         </LabelRow>
         <InputRow>
@@ -124,7 +135,6 @@ const TextInput = styled.input`
   border: none;
   font-size: 12px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-
   
   :focus {
     outline: none;
@@ -145,4 +155,8 @@ const SelectInput = styled.select`
   :focus {
     outline: none;
   }
+`;
+
+const SliderDirectInput = styled.input`
+  width: 48px;
 `;
