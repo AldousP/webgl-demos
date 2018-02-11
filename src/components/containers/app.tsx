@@ -15,7 +15,7 @@ import Header from '@app/components/containers/header';
 import Home from '@app/components/routes/demos';
 import About from '@app/components/routes/about';
 import NotFound from '@app/components/routes/404';
-import { shadowMixin } from '@app/util/styleMixins';
+import { shadowMixin } from '@app/util/style-mixins';
 
 export interface Props {
   navOpen: boolean,

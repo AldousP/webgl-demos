@@ -3,11 +3,11 @@ import styled from 'styled-components';
 
 import FaGithub = require("react-icons/lib/fa/github");
 import MdMenu = require("react-icons/lib/md/menu");
-import { shadowMixin } from '@app/util/styleMixins';
+import { shadowMixin } from '@app/util/style-mixins';
 import { Creators } from '@app/actions';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import AppConfig from '@app/appConfig';
+import AppConfig from '@app/app-config';
 
 export type Props = {
   AppSetNavOpen: typeof Creators.AppSetNavOpen,

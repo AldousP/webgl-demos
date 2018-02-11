@@ -5,7 +5,7 @@ import { mat4, vec3, vec4 } from 'gl-matrix';
 
 import breakpoints from '@app/components/styled/breakpoints';
 import EditorValueInput from "@app/components/UI/editor-value-input";
-import { Sequencer, SequenceType } from '@app/util/sequencer';
+import { Sequencer, SequenceType } from '@app/types/sequencer';
 import { degToRad, radToDeg, isPowerOf2, randRange } from '@app/util/math';
 import EditorValue from '@app/types/editor-values/interface-editor-value';
 
@@ -223,7 +223,6 @@ const setShaderData = ( gl: WebGLRenderingContext, shader: Shader, entity: Entit
   }
 };
 
-
 export default class Scene<P> extends React.Component<P, State> {
   delta: number;
   last: number;
@@ -251,7 +250,7 @@ export default class Scene<P> extends React.Component<P, State> {
       editorData: {
         CamX: 0,
         CamY: 0,
-        CamZ: 7.75,
+        CamZ: 3.75,
         RotX: 0,
         RotY: 0,
         RotZ: 0,
