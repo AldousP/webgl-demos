@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { ChromePicker } from 'react-color';
+import { CompactPicker } from 'react-color';
 
 import EditorValue from '@app/types/editor-values/interface-editor-value';
 import EditorValueInputType from '@app/types/editor-values/editor-value-type';
@@ -9,8 +9,11 @@ import { SelectOption, SelectValue } from '@app/types/editor-values/select-value
 import ColorValue from '@app/types/editor-values/color-value';
 import SliderValue from '@app/types/editor-values/slider-value';
 
-export type State = {
+import MdAdd = require("react-icons/lib/md/add");
+import MdRemove = require("react-icons/lib/md/remove");
 
+export type State = {
+  valueExpanded: boolean
 }
 
 export type Props = {
@@ -21,7 +24,10 @@ export type Props = {
 
 export default class EditorValueInput extends React.Component<Props, State> {
   constructor () {
-    super()
+    super();
+    this.state = {
+      valueExpanded: false
+    }
   }
 
   renderInput () {
@@ -60,9 +66,30 @@ export default class EditorValueInput extends React.Component<Props, State> {
       case EditorValueInputType.ColorInput:
         data = this.props.data as ColorValue;
         return (
-          <div>Color Picker</div>
+          <div>
+            {
+              this.state.valueExpanded ?
+                <PickerWrapper>
+                  <MdRemove
+                    onClick={ this.toggleOpen } />
+                  <CompactPicker
+                    color={ this.props.value }
+                    onChangeComplete={ color => this.props.onChange( color.rgb ) }/>
+                </PickerWrapper>
+                :
+                <PickerWrapper>
+                  <MdAdd onClick={ this.toggleOpen } />
+                </PickerWrapper>
+            }
+          </div>
         )
     }
+  }
+
+  toggleOpen = () => {
+    this.setState( {
+      valueExpanded: !this.state.valueExpanded
+    } );
   }
 
   render () {
@@ -89,6 +116,12 @@ export default class EditorValueInput extends React.Component<Props, State> {
     )
   }
 }
+
+const PickerWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 const ValueWrapper = styled.div`
   background-color: ${ props => props.theme.editor.valueBackground };

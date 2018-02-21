@@ -7,11 +7,11 @@ export function degToRad(d: number): number {
 }
 
 export function isPowerOf2(value): boolean {
-  return (value & (value - 1)) == 0;
+  return ( value & ( value - 1 ) ) == 0;
 }
 
 export function randRange(lower, upper): number {
-  return ((upper - lower) * Math.random()) + lower;
+  return ( ( upper - lower ) * Math.random() ) + lower;
 }
 
 
