@@ -22,6 +22,7 @@ export default class SceneColorInput extends React.Component<Props, State> {
 
   onChange = ( e ) => {
     const value: Color = e.rgb;
+    console.log( value );
     this.props.onChange( value );
   };
 

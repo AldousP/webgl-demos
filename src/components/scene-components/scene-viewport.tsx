@@ -11,7 +11,7 @@ export type SceneProps = {
    * An instance of a {@link RenderableScene}
    */
   scene: RenderableScene,
-  args: Object
+  args: any
 }
 
 export type SceneState = {
@@ -64,10 +64,10 @@ export default class SceneViewport extends React.Component<SceneProps, SceneStat
     this.props.scene.update( this.delta, this.props.args );
     gl.viewport( 0, 0, gl.canvas.width, gl.canvas.height );
     gl.clearColor(
-      0,
-      0,
-      0,
-      1
+      this.props.args.color.r / 255,
+      this.props.args.color.g / 255,
+      this.props.args.color.b / 255,
+      1,
     );
     gl.clearDepth( 1.0 );                 // Clear everything
     gl.enable( gl.DEPTH_TEST );           // Enable depth testing

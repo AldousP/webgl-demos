@@ -1,7 +1,6 @@
 import { mat4 } from "gl-matrix";
 import Shader from '@app/types/shader';
 import DefaultShader from '@app/shader-wrappers/default';
-import { Entry } from 'webpack';
 import Entity from '@app/types/entity';
 import { initializeShader, setShaderData } from '@app/util/gl';
 
@@ -58,8 +57,6 @@ const scene = {
       zNear,
       zFar
     );
-
-    mat4.rotateX( this.sampleCube.transform, this.sampleCube.transform, delta );
   },
 
   render: function ( gl: WebGLRenderingContext ) {
