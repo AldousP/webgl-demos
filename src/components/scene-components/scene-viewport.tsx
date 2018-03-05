@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { mat4 } from "gl-matrix";
+import { mat4, vec2 } from "gl-matrix";
 export type SceneProps = {
   /**
    * An instance of a {@link RenderableScene}
@@ -46,6 +46,20 @@ export default class SceneViewport extends React.Component<SceneProps, SceneStat
   componentDidMount () {
     const window = require( 'window' );
     const canvas: HTMLCanvasElement = window.document.getElementById('scene-gl-canvas' );
+    let start: vec2;
+    canvas.onmousedown = function ( e: any ) {
+      const x = e.offsetX;
+      const y = e.offsetY;
+      start = vec2.fromValues( x, y );
+    };
+
+    canvas.onmouseup = function ( e ) {
+      const x = e.offsetX;
+      const y = e.offsetY;
+      vec2.sub( start, start, [
+        x, y
+      ] );
+    };
     this.gl = canvas.getContext('webgl' );
     this.props.scene.init( this.gl );
 
