@@ -6,6 +6,7 @@ import { Creators } from 'src/actions/index';
 import SceneViewport from 'src/components/scene-components/scene-viewport';
 import styled from 'styled-components';
 import SceneSliderInput from 'src/components/scene-components/inputs/scene-slider-input';
+import SceneTextInput from '@app/components/scene-components/inputs/scene-text-input';
 
 const scene = {
   // editor: {
@@ -26,7 +27,8 @@ export type Props = {
 
 export type State = {
   editor: {
-    sampleValue: number
+    sampleValue: number,
+    textInput: string
   }
 }
 ;
@@ -36,7 +38,8 @@ class SampleScene extends React.Component<Props, State> {
     super( props );
     this.state = {
       editor: {
-        sampleValue: 0
+        sampleValue: 0,
+        textInput: '',
       }
     }
   }
@@ -68,8 +71,10 @@ class SampleScene extends React.Component<Props, State> {
                               min={ 0 }
                               max={ 100}
                               step={ 0.1 }
-                              onChange={ val => this.setEditorValue( 'sampleValue', val ) }
-            />
+                              onChange={ val => this.setEditorValue( 'sampleValue', val ) } />
+            <SceneTextInput name={ 'Text Input' }
+                            value={ editor.textInput }
+                            onChange={ val => this.setEditorValue( 'textInput', val ) } />
           </SceneInputsWrapper>
 
         </SceneAndInputsWrapper>
