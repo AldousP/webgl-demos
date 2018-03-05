@@ -21,6 +21,7 @@ export interface RenderableScene {
   update: ( delta: number, args: Object ) => void;
   render: ( gl: WebGLRenderingContext ) => void;
   init: ( gl: WebGLRenderingContext ) => void;
+  onSwipe: ( diff: vec2, elapsed: number ) => void;
 }
 
 
@@ -47,18 +48,22 @@ export default class SceneViewport extends React.Component<SceneProps, SceneStat
     const window = require( 'window' );
     const canvas: HTMLCanvasElement = window.document.getElementById('scene-gl-canvas' );
     let start: vec2;
+    let swipeStart;
     canvas.onmousedown = function ( e: any ) {
       const x = e.offsetX;
       const y = e.offsetY;
+      swipeStart = e.timeStamp;
       start = vec2.fromValues( x, y );
     };
 
-    canvas.onmouseup = function ( e ) {
+    canvas.onmouseup = ( e ) => {
       const x = e.offsetX;
       const y = e.offsetY;
       vec2.sub( start, start, [
         x, y
       ] );
+
+      this.props.scene.onSwipe( start,  ( e.timeStamp - swipeStart ) / 1000 );
     };
     this.gl = canvas.getContext('webgl' );
     this.props.scene.init( this.gl );

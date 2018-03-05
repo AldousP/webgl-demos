@@ -62,10 +62,14 @@ const scene = {
   render: function ( gl: WebGLRenderingContext ) {
     this.renderEntity( this.sampleCube, gl );
   },
+  
+  onSwipe: function ( diff, elapsed ) {
+
+  },
 
   close: function () {
     console.log( 'closing' );
-  },
+  }
 };
 
 export default scene;
