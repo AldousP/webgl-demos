@@ -1,11 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import DefaultShader from '@app/shader-wrappers/default';
-import { initializeShader, setShaderData } from '@app/util/gl';
 import { mat4 } from "gl-matrix";
-import Entity from '@app/types/entity';
-
 export type SceneProps = {
   /**
    * An instance of a {@link RenderableScene}
