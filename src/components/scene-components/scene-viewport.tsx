@@ -24,7 +24,7 @@ export type SceneState = {
 export interface RenderableScene {
   update: ( delta: number, args: Object ) => void;
   render: ( gl: WebGLRenderingContext ) => void;
-  init: ( ) => void;
+  init: ( gl: WebGLRenderingContext ) => void;
 }
 
 
@@ -42,9 +42,6 @@ export default class SceneViewport extends React.Component<SceneProps, SceneStat
   gl: WebGLRenderingContext;
   delta: number = 0;
   last: number = new Date().getTime();
-  shader: DefaultShader = new DefaultShader();
-  transform: mat4;
-  shaderTransform: mat4;
 
   constructor ( props ) {
     super( props );
@@ -54,11 +51,8 @@ export default class SceneViewport extends React.Component<SceneProps, SceneStat
     const window = require( 'window' );
     const canvas: HTMLCanvasElement = window.document.getElementById('scene-gl-canvas' );
     this.gl = canvas.getContext('webgl' );
-    this.props.scene.init();
+    this.props.scene.init( this.gl );
 
-    initializeShader( this.shader, this.gl );
-    this.transform = mat4.create();
-    this.shaderTransform = mat4.create();
     requestAnimationFrame( this.update );
   }
 
@@ -79,39 +73,6 @@ export default class SceneViewport extends React.Component<SceneProps, SceneStat
     gl.enable( gl.DEPTH_TEST );           // Enable depth testing
     gl.depthFunc( gl.LEQUAL) ;            // Near things obscure far things
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
-    gl.useProgram( this.shader.program );
-
-    const fieldOfView = 120 * Math.PI / 180;
-    const aspect = 1.45;
-    const zNear = 0.1;
-    const zFar = 100.0;
-
-    mat4.perspective(
-      this.transform,
-      fieldOfView,
-      aspect,
-      zNear,
-      zFar
-    );
-
-
-    entities.forEach( entity => {
-      mat4.identity( this.shaderTransform );
-      mat4.mul( this.shaderTransform, this.transform, entity.transform );
-      setShaderData( gl, this.shader, entity, this.shaderTransform );
-      {
-        const vertexCount = entity.mesh.modelData.indices.length;
-        const type = gl.UNSIGNED_SHORT;
-        const offset = 0;
-        gl.drawElements(
-          gl.LINE_LOOP,
-          vertexCount,
-          type,
-          offset
-        );
-      }
-    } );
-
 
     this.props.scene.render( this.gl );
     requestAnimationFrame( this.update );
