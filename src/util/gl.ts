@@ -30,7 +30,6 @@ const initializeShader = ( shader: Shader, gl: WebGLRenderingContext ) => {
     shader.loaded = true;
     Object.keys( shader.attributes ).map( key => {
       let attribute = shader.attributes[ key ];
-      console.log( attribute.name );
       attribute.location = gl.getAttribLocation( program, 'a_' + attribute.name ) ;
       attribute.buffer = gl.createBuffer();
     });

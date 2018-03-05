@@ -10,15 +10,29 @@ import SceneTextInput from '@app/components/scene-components/inputs/scene-text-i
 import SceneColorInput from '@app/components/scene-components/inputs/scene-color-input';
 import Color from '@app/types/color';
 
+import { mat4 } from 'gl-matrix';
+import Entity from '@app/types/entity';
+
+const cubeEntity: Entity = {
+  transform: mat4.create(),
+  mesh: {
+    modelData: require( 'static/models/cube.obj' ).default
+  }
+};
+
 const scene = {
-  // editor: {
-  //   sampleTextInput: {
-  //     type: 'text',
-  //     maxLength: 10,
-  //     value: 'initial value'
-  //   }
-  // }
-  update () {
+  init: ( ) => {
+  },
+
+  update: ( delta: number, args: Object ) => {
+
+  },
+
+  close: () => {
+    console.log( 'closing' );
+  },
+
+  render: ( gl: WebGLRenderingContext ) => {
 
   }
 };
@@ -71,7 +85,7 @@ class SampleScene extends React.Component<Props, State> {
         <SceneAndInputsWrapper>
 
           <SceneViewportWrapper>
-            <SceneViewport scene={ scene } />
+            <SceneViewport scene={ scene } args={ editor }  />
           </SceneViewportWrapper>
 
           <SceneInputsWrapper>
