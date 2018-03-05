@@ -1,12 +1,12 @@
 import * as React from 'react';
 
 import { bindActionCreators } from 'redux';
-import { Creators } from '@app/actions';
 import { connect } from 'react-redux';
 
 import styled from 'styled-components';
-import Scene6 from '@app/scenes/scene-6';
 
+import { Creators } from '@app/actions';
+import SampleScene from '@app/components/scenes/sample-scene';
 
 export type Props = {
   navOpen: boolean,
@@ -17,6 +17,14 @@ export type State = {
 
 }
 
+const editorConfig = {
+  textInput: {
+    type: ''
+  },
+  colorInput: {},
+  sliderInput: {}
+};
+
 class Demos extends React.Component<Props, State> {
   constructor( props ) {
     super( props );
@@ -25,7 +33,7 @@ class Demos extends React.Component<Props, State> {
   render() {
     return (
       <DemoContainer>
-        <Scene6/>
+        <SampleScene/>
       </DemoContainer>
     );
   }
@@ -38,7 +46,7 @@ const mapStateToProps = ( state ) => {
 };
 
 const DemoContainer = styled.div`
-  
+ 
 `;
 
 const mapDispatchToProps = ( dispatch ) =>

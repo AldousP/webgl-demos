@@ -216,11 +216,11 @@ const ContentLayer = styled.div`
 `;
 
 const BodyContent = styled.div`
-  padding-left: 32px;
-  padding-right: 32px;
   height: 100%;
-  padding-bottom: 32px;
   font-size: ${ props => props.theme.type.bodySize };
+  max-width: 712px;
+  margin-left: 64px;
+  margin-right: 64px;
 `;
 const mapStateToProps = ( state ) => {
   return {

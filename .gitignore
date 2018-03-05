@@ -58,3 +58,4 @@ build
 npm-debug.log
 
 src/**.js
+docs
