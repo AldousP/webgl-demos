@@ -66,7 +66,7 @@ class App extends React.Component<Props, State> {
 
   render() {
     return (
-      <ThemeProvider theme={ lightTheme }>
+      <ThemeProvider theme={ darkTheme }>
         <Container>
           <Header />
           <BodyContainer>
@@ -172,7 +172,8 @@ const SideNav = styled.div`
   position: absolute;
   box-sizing: border-box;
   font-family: ${ props => props.theme.type.navFont };
-  background-color: white;
+  color: ${ props => props.theme.color };
+  background-color: ${ props => props.theme.background };
   left: -${ width / 10 }px;
   box-shadow: ${ shadowMixin( 1 ) };
   transition: left ${ transitionLength } cubic-bezier(0.165, 0.84, 0.44, 1);
@@ -204,6 +205,8 @@ const SliderLayer = styled.div`
 `;
 
 const ContentLayer = styled.div`
+  display: flex;
+  justify-content: center;
   position: fixed;
   width: 100%;
   height: 100%;
@@ -218,9 +221,7 @@ const ContentLayer = styled.div`
 const BodyContent = styled.div`
   height: 100%;
   font-size: ${ props => props.theme.type.bodySize };
-  max-width: 712px;
-  margin-left: 64px;
-  margin-right: 64px;
+  max-width: 1444px;
 `;
 const mapStateToProps = ( state ) => {
   return {

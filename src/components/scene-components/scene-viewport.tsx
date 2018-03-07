@@ -25,13 +25,6 @@ export interface RenderableScene {
 }
 
 
-const entities = [ {
-  transform: mat4.create(),
-  mesh: {
-    modelData: require( 'static/models/cube.obj' ).default
-  }
-} ];
-
 /**
  * Takes a {@link RenderableScene }
  */

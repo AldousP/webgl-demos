@@ -1,15 +1,21 @@
-import { mat4 } from "gl-matrix";
+import { mat4, vec3 } from "gl-matrix";
 import Shader from '@app/types/shader';
 import DefaultShader from '@app/shader-wrappers/default';
 import Entity from '@app/types/entity';
 import { initializeShader, setShaderData } from '@app/util/gl';
 
-const scene = {
-  shaderTransform: mat4.create(),
-  transform: mat4.create(),
-  shader: null,
-  sampleCube: null,
-  init: function ( gl ) {
+class Scene {
+  shaderTransform: mat4;
+  transform: mat4;
+  shader: Shader;
+  sampleCube: any;
+
+  constructor () {
+    this.shaderTransform = mat4.create();
+    this.transform = mat4.create();
+  }
+
+  init ( gl ) {
     this.sampleCube = {
       transform: mat4.create(),
       mesh: {
@@ -20,12 +26,12 @@ const scene = {
     const shader = new DefaultShader();
     this.setShader( shader, gl );
     gl.useProgram( this.shader.program );
-  },
+  }
 
-  setShader: function ( shader: Shader, gl ) {
+  setShader ( shader: Shader, gl ) {
     this.shader = shader;
     initializeShader( shader, gl );
-  },
+  }
 
   renderEntity ( entity: Entity, gl: WebGLRenderingContext ) {
     mat4.identity( this.shaderTransform );
@@ -42,11 +48,14 @@ const scene = {
         offset
       );
     }
-  },
+  }
 
-  update: function ( delta: number, args: Object ) {
-    const fieldOfView = 120 * Math.PI / 180;
-    const aspect = 1.45;
+  time: number = 0;
+
+  update ( delta: number, args: Object ) {
+    this.time += delta;
+    const fieldOfView = 90 * Math.PI / 180;
+    const aspect = 1;
     const zNear = 0.1;
     const zFar = 100.0;
 
@@ -57,19 +66,21 @@ const scene = {
       zNear,
       zFar
     );
-  },
+    mat4.translate( this.transform, this.transform, [ 0, 0, -3 ]);
+    mat4.rotateY( this.transform, this.transform, this.time );
+  }
 
-  render: function ( gl: WebGLRenderingContext ) {
+  render ( gl: WebGLRenderingContext ) {
     this.renderEntity( this.sampleCube, gl );
-  },
+  }
   
-  onSwipe: function ( diff, elapsed ) {
+  onSwipe ( diff, elapsed ) {
 
-  },
+  }
 
-  close: function () {
+  close () {
     console.log( 'closing' );
   }
-};
+}
 
-export default scene;
+export default Scene;

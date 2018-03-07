@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Creators } from 'src/actions/index';
+import { Creators } from '@app/actions';
 
 import SceneViewport from 'src/components/scene-components/scene-viewport';
 import styled from 'styled-components';
-import SceneSliderInput from 'src/components/scene-components/inputs/scene-slider-input';
-import SceneTextInput from '@app/components/scene-components/inputs/scene-text-input';
 import SceneColorInput from '@app/components/scene-components/inputs/scene-color-input';
 import Color from '@app/types/color';
 
-import scene from '@app/components/scenes/scene';
+import Scene from '@app/components/scenes/scene';
+
+const scene = new Scene();
 
 export type Props = {
 
@@ -22,10 +22,9 @@ export type State = {
     textInput: string,
     color: Color
   }
-}
-;
+};
 
-class SampleScene extends React.Component<Props, State> {
+class ColorInput extends React.Component<Props, State> {
   constructor( props ) {
     super( props );
     this.state = {
@@ -54,47 +53,43 @@ class SampleScene extends React.Component<Props, State> {
   render () {
     const { editor } = this.state;
     return (
-      <span>
-        <h2>Sample Scene</h2>
-        <hr/>
+      <SceneWrapper>
+        <h3>Color Input</h3>
         <SceneAndInputsWrapper>
-
           <SceneViewportWrapper>
             <SceneViewport scene={ scene } args={ editor }  />
           </SceneViewportWrapper>
 
           <SceneInputsWrapper>
-            <SceneSliderInput name={ 'Sample Slider'}
-                              value={ editor.sampleValue }
-                              min={ 0 }
-                              max={ 100}
-                              step={ 0.1 }
-                              onChange={ val => this.setEditorValue( 'sampleValue', val ) } />
-            <SceneTextInput name={ 'Text Input' }
-                            value={ editor.textInput }
-                            onChange={ val => this.setEditorValue( 'textInput', val ) } />
             <SceneColorInput name={ 'Color Input' }
-                            value={ editor.color }
-                            onChange={ val => this.setEditorValue( 'color', val ) } />
+                             value={ editor.color }
+                             onChange={ val => this.setEditorValue( 'color', val ) } />
           </SceneInputsWrapper>
-
         </SceneAndInputsWrapper>
-      </span>
+      </SceneWrapper>
     );
   }
 }
 
+const SceneWrapper = styled.div`
+  
+`;
+
 const SceneAndInputsWrapper = styled.div`
   display: flex;
-  justify-content: space-around;
+  justify-content: flex-start;
+  
+  @media ( max-width: 512px ) {
+    flex-direction: column;
+  }
 `;
 
 const SceneViewportWrapper = styled.div`
-  border: thin solid deeppink;
 `;
 
 const SceneInputsWrapper = styled.div`
-  border: thin solid deepskyblue;
+  max-width: 312px;
+  margin-left: 8px;
 `;
 
 const mapStateToProps = ( state ) => {
@@ -108,5 +103,5 @@ const mapDispatchToProps = ( dispatch ) =>
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)( SampleScene );
+)( ColorInput );
 

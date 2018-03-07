@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { Creators } from '@app/actions';
-import SampleScene from '@app/components/scenes/sample-scene';
+import ColorInput from '@app/components/scenes/color-input';
 
 export type Props = {
   navOpen: boolean,
@@ -33,7 +33,7 @@ class Demos extends React.Component<Props, State> {
   render() {
     return (
       <DemoContainer>
-        <SampleScene/>
+        <ColorInput/>
       </DemoContainer>
     );
   }
@@ -46,7 +46,8 @@ const mapStateToProps = ( state ) => {
 };
 
 const DemoContainer = styled.div`
- 
+  display: flex;
+  flex-direction: column;
 `;
 
 const mapDispatchToProps = ( dispatch ) =>
