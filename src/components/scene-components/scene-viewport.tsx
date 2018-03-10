@@ -7,7 +7,7 @@ export type SceneProps = {
    * An instance of a {@link RenderableScene}
    */
   scene: RenderableScene,
-  args: any
+  args: any,
 }
 
 export type SceneState = {
@@ -22,6 +22,8 @@ export interface RenderableScene {
   render: ( gl: WebGLRenderingContext ) => void;
   init: ( gl: WebGLRenderingContext ) => void;
   onSwipe: ( diff: vec2, elapsed: number ) => void;
+  close: () => void;
+  stopped: boolean
 }
 
 
@@ -62,6 +64,10 @@ export default class SceneViewport extends React.Component<SceneProps, SceneStat
     this.props.scene.init( this.gl );
 
     requestAnimationFrame( this.update );
+  }
+
+  componentWillUnmount () {
+    this.props.scene.close();
   }
 
   update = () => {

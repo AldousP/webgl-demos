@@ -6,7 +6,8 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { Creators } from '@app/actions';
-import ColorInput from '@app/components/scenes/color-input';
+import ColorInput from '@app/components/scene-containers/color-input';
+import SceneTwo from '@app/components/scene-containers/scene-2';
 
 export type Props = {
   navOpen: boolean,
@@ -33,7 +34,8 @@ class Demos extends React.Component<Props, State> {
   render() {
     return (
       <DemoContainer>
-        <ColorInput/>
+        {/*<ColorInput/>*/}
+        <SceneTwo/>
       </DemoContainer>
     );
   }

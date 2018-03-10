@@ -33,7 +33,7 @@ export default class SceneSliderInput extends React.Component<Props, State> {
       <SliderInputWrapper>
         <TopRow>
           <span> { this.props.name }</span>
-          <span> { this.props.value } </span>
+          <span> { Math.round( this.props.value * 100 ) / 100 } </span>
         </TopRow>
         <input type="range"
                min={ this.props.min }
@@ -48,10 +48,11 @@ export default class SceneSliderInput extends React.Component<Props, State> {
 }
 
 const SliderInputWrapper = styled.div`
-  border: thin solid black;
+  border: 2px solid ${ props => props.theme.trimColor };
+  border-radius: 2px;
   margin-top: 2px;
   margin-bottom: 2px;
-  padding: 4px;
+  padding: 12px;
 `;
 
 const TopRow = styled.div`

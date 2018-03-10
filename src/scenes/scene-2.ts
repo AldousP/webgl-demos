@@ -1,18 +1,27 @@
 import { mat4, vec3 } from "gl-matrix";
-import Shader from '@app/types/shader';
-import DefaultShader from '@app/shader-wrappers/default';
-import Entity from '@app/types/entity';
-import { initializeShader, setShaderData } from '@app/util/gl';
+import Shader from 'src/types/shader';
+import DefaultShader from 'src/shader-wrappers/default';
+import Entity from 'src/types/entity';
+import { initializeShader, setShaderData } from 'src/util/gl';
+import { RenderableScene } from 'src/components/scene-components/scene-viewport';
+import Color from '@app/types/color';
 
-class Scene {
+interface Args {
+  color: Color,
+  yaw: number
+}
+
+class Scene2 implements RenderableScene {
   shaderTransform: mat4;
   transform: mat4;
   shader: Shader;
   sampleCube: any;
+  stopped: boolean;
 
   constructor () {
     this.shaderTransform = mat4.create();
     this.transform = mat4.create();
+    this.stopped = false;
   }
 
   init ( gl ) {
@@ -52,7 +61,7 @@ class Scene {
 
   time: number = 0;
 
-  update ( delta: number, args: Object ) {
+  update ( delta: number, args: Args ) {
     this.time += delta;
     const fieldOfView = 90 * Math.PI / 180;
     const aspect = 1;
@@ -67,20 +76,21 @@ class Scene {
       zFar
     );
     mat4.translate( this.transform, this.transform, [ 0, 0, -3 ]);
-    mat4.rotateY( this.transform, this.transform, this.time );
+    mat4.rotateY( this.transform, this.transform, args.yaw );
   }
 
   render ( gl: WebGLRenderingContext ) {
     this.renderEntity( this.sampleCube, gl );
   }
-  
+
   onSwipe ( diff, elapsed ) {
 
   }
 
   close () {
     console.log( 'closing' );
+    this.stopped = true;
   }
 }
 
-export default Scene;
+export default Scene2;

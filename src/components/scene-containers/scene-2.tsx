@@ -7,10 +7,11 @@ import SceneViewport from 'src/components/scene-components/scene-viewport';
 import styled from 'styled-components';
 import SceneColorInput from '@app/components/scene-components/inputs/scene-color-input';
 import Color from '@app/types/color';
+import Scene2 from '@app/scenes/scene-2';
+import breakpoints from '@app/components/styled/breakpoints';
+import SceneSliderInput from '@app/components/scene-components/inputs/scene-slider-input';
 
-import Scene from '@app/components/scenes/scene';
-
-const scene = new Scene();
+const scene = new Scene2();
 
 export type Props = {
 
@@ -18,19 +19,17 @@ export type Props = {
 
 export type State = {
   editor: {
-    sampleValue: number,
-    textInput: string,
+    yaw: number,
     color: Color
   }
 };
 
-class ColorInput extends React.Component<Props, State> {
+class SceneTwo extends React.Component<Props, State> {
   constructor( props ) {
     super( props );
     this.state = {
       editor: {
-        sampleValue: 0,
-        textInput: '',
+        yaw: 0,
         color: {
           r: 0,
           g: 0,
@@ -54,7 +53,7 @@ class ColorInput extends React.Component<Props, State> {
     const { editor } = this.state;
     return (
       <SceneWrapper>
-        <h3>Color Input</h3>
+        <h3>Scene Two</h3>
         <SceneAndInputsWrapper>
           <SceneViewportWrapper>
             <SceneViewport scene={ scene } args={ editor }  />
@@ -64,6 +63,12 @@ class ColorInput extends React.Component<Props, State> {
             <SceneColorInput name={ 'Color Input' }
                              value={ editor.color }
                              onChange={ val => this.setEditorValue( 'color', val ) } />
+            <SceneSliderInput name={ 'Yaw' }
+                              value={ editor.yaw }
+                              max={ Math.PI }
+                              min={ -Math.PI }
+                              step={ .01 }
+                              onChange={ val => this.setEditorValue( 'yaw', val ) } />
           </SceneInputsWrapper>
         </SceneAndInputsWrapper>
       </SceneWrapper>
@@ -90,6 +95,9 @@ const SceneViewportWrapper = styled.div`
 const SceneInputsWrapper = styled.div`
   max-width: 312px;
   margin-left: 8px;
+  @media (max-width: ${ breakpoints.small }px) {
+    margin-left: 0;
+  }
 `;
 
 const mapStateToProps = ( state ) => {
@@ -103,5 +111,5 @@ const mapDispatchToProps = ( dispatch ) =>
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)( ColorInput );
+)( SceneTwo );
 
