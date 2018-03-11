@@ -25,9 +25,9 @@ export interface AppTheme {
 
 const type = {
   bodySize: '14px',
-  headerFont: "'Heilvetica Neue', 'Arial', sans-serif",
-  navFont: "'Heilvetica Neue', 'Arial', sans-serif",
-  contentFont: "'Heilvetica Neue', 'Arial', sans-serif",
+  headerFont: "sans-serif",
+  navFont: "sans-serif",
+  contentFont: "sans-serif",
   h1: '32px',
   h2: '28px',
   h3: '24px',

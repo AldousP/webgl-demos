@@ -60,9 +60,6 @@ class SceneTwo extends React.Component<Props, State> {
           </SceneViewportWrapper>
 
           <SceneInputsWrapper>
-            <SceneColorInput name={ 'Color Input' }
-                             value={ editor.color }
-                             onChange={ val => this.setEditorValue( 'color', val ) } />
             <SceneSliderInput name={ 'Yaw' }
                               value={ editor.yaw }
                               max={ Math.PI }

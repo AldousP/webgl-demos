@@ -7,17 +7,15 @@ import { Redirect, Route, Switch, Link, withRouter } from 'react-router-dom';
 import * as classNames from 'classnames';
 
 import styled, { ThemeProvider, injectGlobal } from 'styled-components';
-import MdMenu = require("react-icons/lib/md/menu");
-import FaGithub = require('react-icons/lib/fa/github');
 
 import { darkTheme, lightTheme } from '@app/components/styled/themes';
 import Header from '@app/components/containers/header';
-import About from '@app/components/routes/about';
 import NotFound from '@app/components/routes/404';
 import { shadowMixin } from '@app/util/style-mixins';
 
-import ColorInput from '@app/components/scene-containers/color-input';
-import SceneTwo from '@app/components/scene-containers/scene-2';
+import config from '@app/app-config';
+
+const { modules } = config;
 
 export interface Props {
   navOpen: boolean,
@@ -29,29 +27,6 @@ export type State = {
 
 }
 
-export type Module = {
-  name: string,
-  route: string,
-  component: React.ComponentType<any>
-}
-
-const modules: Array<Module> = [
-  {
-    name: 'Color Input',
-    route: 'color-input',
-    component: ColorInput
-  },
-  {
-    name: 'Scene 2',
-    route: 'scene-2',
-    component: SceneTwo
-  },
-  {
-    route: 'about',
-    name: 'About',
-    component: About
-  }
-];
 
 class App extends React.Component<Props, State> {
   constructor( props ) {
@@ -175,6 +150,7 @@ const SideNav = styled.div`
   padding: 0;
   margin: 0;
   height: 100%;
+  width: ${ width }px;
   z-index: 2;
   width: ${ width }px;
   justify-content: flex-start;
@@ -184,7 +160,7 @@ const SideNav = styled.div`
   font-family: ${ props => props.theme.type.navFont };
   color: ${ props => props.theme.color };
   background-color: ${ props => props.theme.background };
-  left: -${ width / 10 }px;
+  left: 0;
   box-shadow: ${ shadowMixin( 1 ) };
   transition: left ${ transitionLength } cubic-bezier(0.165, 0.84, 0.44, 1);
   &.hidden {
@@ -198,11 +174,15 @@ const SideNav = styled.div`
 `;
 
 const NavLink = styled.div`
+  font-weight: 100;
   height: 48px;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   text-transform: capitalize;
+  font-size: 12px;
+  padding-left: 8px;
+  font-family: ${ props => props.theme.type.navFont };
   border-top: thin solid ${ props => props.theme.trimColor };
   border-bottom: thin solid ${ props => props.theme.trimColor };
 `;
