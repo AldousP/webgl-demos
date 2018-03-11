@@ -12,10 +12,12 @@ import FaGithub = require('react-icons/lib/fa/github');
 
 import { darkTheme, lightTheme } from '@app/components/styled/themes';
 import Header from '@app/components/containers/header';
-import Home from '@app/components/routes/demos';
 import About from '@app/components/routes/about';
 import NotFound from '@app/components/routes/404';
 import { shadowMixin } from '@app/util/style-mixins';
+
+import ColorInput from '@app/components/scene-containers/color-input';
+import SceneTwo from '@app/components/scene-containers/scene-2';
 
 export interface Props {
   navOpen: boolean,
@@ -29,16 +31,24 @@ export type State = {
 
 export type Module = {
   name: string,
+  route: string,
   component: React.ComponentType<any>
 }
 
 const modules: Array<Module> = [
   {
-    name: 'demos',
-    component: Home
+    name: 'Color Input',
+    route: 'color-input',
+    component: ColorInput
   },
   {
-    name: 'about',
+    name: 'Scene 2',
+    route: 'scene-2',
+    component: SceneTwo
+  },
+  {
+    route: 'about',
+    name: 'About',
     component: About
   }
 ];
@@ -77,9 +87,9 @@ class App extends React.Component<Props, State> {
                 {
                   modules.map( ( module, i )=> (
                     <Link key={ i }
-                          to={ `/${ module.name }` }
+                          to={ `/${ module.route }` }
                           // @ts-ignore
-                          replace={ module.name === this.props.location.pathname.split( '/' )[ 1 ] }
+                          replace={ module.route === this.props.location.pathname.split( '/' )[ 1 ] }
                     >
                       <NavLink> { module.name } </NavLink>
                     </Link>
@@ -99,11 +109,11 @@ class App extends React.Component<Props, State> {
                 <Switch>
                   {
                     modules.map( ( module, i ) => (
-                      <Route key={ i } path={ `/${ module.name }` } component={ module.component } />
+                      <Route key={ i } path={ `/${ module.route }` } component={ module.component } />
                     ) )
                   }
                   <Route path='/' exact={ true } component={ () => (
-                    <Redirect to={ `/${ modules[ 0 ].name }` } />
+                    <Redirect to={ `/${ modules[ 0 ].route }` } />
                   ) } />
                   <Route path='' component={ NotFound }/>
                   <Redirect to={ '/404' } />
