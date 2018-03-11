@@ -11,7 +11,7 @@ export type SceneProps = {
 }
 
 export type SceneState = {
-
+  closed: boolean
 }
 
 /**
@@ -22,10 +22,8 @@ export interface RenderableScene {
   render: ( gl: WebGLRenderingContext ) => void;
   init: ( gl: WebGLRenderingContext ) => void;
   onSwipe: ( diff: vec2, elapsed: number ) => void;
-  close: () => void;
   stopped: boolean
 }
-
 
 /**
  * Takes a {@link RenderableScene }
@@ -34,9 +32,11 @@ export default class SceneViewport extends React.Component<SceneProps, SceneStat
   gl: WebGLRenderingContext;
   delta: number = 0;
   last: number = new Date().getTime();
+  stopped: boolean;
 
   constructor ( props ) {
     super( props );
+    this.stopped = false;
   }
 
   componentDidMount () {
@@ -44,6 +44,7 @@ export default class SceneViewport extends React.Component<SceneProps, SceneStat
     const canvas: HTMLCanvasElement = window.document.getElementById('scene-gl-canvas' );
     let start: vec2;
     let swipeStart;
+    this.props.scene.stopped = false;
     canvas.onmousedown = function ( e: any ) {
       const x = e.offsetX;
       const y = e.offsetY;
@@ -67,7 +68,7 @@ export default class SceneViewport extends React.Component<SceneProps, SceneStat
   }
 
   componentWillUnmount () {
-    this.props.scene.close();
+    this.stopped = true;
   }
 
   update = () => {
@@ -89,7 +90,9 @@ export default class SceneViewport extends React.Component<SceneProps, SceneStat
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
 
     this.props.scene.render( this.gl );
-    requestAnimationFrame( this.update );
+    if ( !this.stopped ) {
+      requestAnimationFrame( this.update );
+    }
   };
 
   render () {

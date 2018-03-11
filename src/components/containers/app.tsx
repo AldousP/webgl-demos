@@ -181,7 +181,7 @@ const NavLink = styled.div`
   align-items: center;
   text-transform: capitalize;
   font-size: 12px;
-  padding-left: 8px;
+  padding-left: 16px;
   font-family: ${ props => props.theme.type.navFont };
   border-top: thin solid ${ props => props.theme.trimColor };
   border-bottom: thin solid ${ props => props.theme.trimColor };

@@ -80,10 +80,6 @@ class Scene1 implements RenderableScene {
   onSwipe ( diff, elapsed ) {
 
   }
-
-  close () {
-    console.log( 'closing' );
-  }
 }
 
 export default Scene1;
