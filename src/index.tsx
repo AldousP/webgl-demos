@@ -1,37 +1,35 @@
-import Viewport from "./tsx/viewport";
+import { applyMiddleware, compose, createStore } from 'redux';
+import { HashRouter } from 'react-router-dom';
 
-let document = window.document;
+const APP_SELECTOR = 'app-root';
 
-import 'bootstrap/scss/bootstrap.scss';
 import 'static/scss/app.scss';
+import 'normalize.css/normalize.css';
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { effectsMiddleware } from 'redux-effex';
+import { persistStore, persistCombineReducers } from 'redux-persist'
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/es/integration/react'
 
-import App from './tsx/app';
-import ToolPane from "./tsx/toolpane";
-import Scene from "./ts/scenes/Scene4";
+import App from '@app/components/containers/app';
+import root from '@app/reducers';
+import effects from '@app/effects';
 
-import './ts/component-type';
-
-let scene: Scene = new Scene();
-let canvas_ID = 'app-canvas';
+let document = window.document;
+let composeEnhancers = window['__REDUX_DEVTOOLS_EXTENSION_COMPOSE__'] || compose;
+let enhancers = composeEnhancers ( applyMiddleware(effectsMiddleware( effects )) );
+let store = createStore( root, enhancers );
+let persistor = persistStore( store );
 
 ReactDOM.render(
-  <App>
-    <Viewport className="col-xs-12 col-sm-8 order-3 pane"
-              canvas_ID={ canvas_ID }
-              width={ 712 }
-              height={ 1280 }
-              mounted={ () => scene.setup( canvas_ID ) }/>
-    <ToolPane className="col-xs-12 order-4 col-sm-4 pane"
-              sceneState={ scene.appState }
-              scene={ scene } />
-  </App>,
-  document.getElementById('app-root')
+  <Provider store={ store }>
+    <PersistGate persistor={ persistor }>
+      <HashRouter>
+        <App/>
+      </HashRouter>
+    </PersistGate>
+  </Provider>,
+  document.getElementById( APP_SELECTOR )
 );
-
-
-
-
-

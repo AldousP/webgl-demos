@@ -1,9 +1,12 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const TsConfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+require('regenerator-runtime/runtime');
 
 module.exports = {
   entry: [
+    'babel-polyfill',
     'webpack/hot/only-dev-server',
     './src/'
   ],
@@ -12,11 +15,17 @@ module.exports = {
     filename: 'app.js'
   },
   resolve: {
-    extensions: ['.js', '.ts', '.tsx', '.glsl'],
-    alias: {
-      static: path.join(__dirname, 'static'),
-      app: path.join(__dirname, 'src')
-    }
+    extensions: [ '.js', '.ts', '.tsx', '.glsl', '.obj' ],
+    plugins: [
+      new webpack.ProvidePlugin({
+        'regeneratorRuntime': 'regenerator-runtime/runtime'
+      }),
+      new TsConfigPathsPlugin({
+        configFile: "./tsconfig.json",
+        logLevel: "info",
+        extensions: [ ".ts", ".tsx"]
+      })
+    ]
   },
   externals: {
   "window": "window",
@@ -24,13 +33,17 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.obj$/,
+        use: 'webpack-obj-loader'
+      },
+      {
         test: /\.glsl$/,
         use: 'webpack-glsl-loader'
       },
       {
-        test: [ /\.ts$/, /\.tsx$/ ],
+        test: [ /\.ts(x?)$/, /\.js$/],
         exclude: /node_modules/,
-        use: 'ts-loader'
+        use: [ 'ts-loader']
       },
       {
         enforce: "pre",
@@ -62,7 +75,7 @@ module.exports = {
         use: [ 'style-loader', 'css-loader' ]
       },
       {
-        test: /\.(jpe?g$|gif|png|eot|woff|ttf|svg)/,
+        test:/\.(png|jpg|woff|svg|eot|ttf|woff2)$/,
         use: [ 'url-loader' ]
       }
     ]
@@ -76,7 +89,7 @@ module.exports = {
   ],
 
   devServer: {
-    host: 'localhost',
+    host: '0.0.0.0',
     port: 8080,
     inline: true,
     historyApiFallback: true,

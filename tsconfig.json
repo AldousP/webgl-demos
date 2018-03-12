@@ -3,11 +3,17 @@
     "module": "commonjs",
     "target": "es5",
     "sourceMap": true,
-    "lib": [ "ES2015", "dom" ],
-    "jsx": "react"
+    "alwaysStrict": true,
+    "lib": ["es2015", "dom", "dom.iterable"],
+    "downlevelIteration": true,
+    "baseUrl": ".",
+    "paths": {
+      "@app/*": [ "src/*" ],
+      "static/*": [ "static/*" ]
+    },
+    "jsx": "react",
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true
   },
-  "exclude": [
-    "node_modules"
-  ],
   "types": [ "node" ]
 }
