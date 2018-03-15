@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { Creators } from '@app/actions';
 import { connect } from 'react-redux';
 import { Redirect, Route, Switch, Link, withRouter } from 'react-router-dom';
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 
 import styled, { ThemeProvider, injectGlobal } from 'styled-components';
 

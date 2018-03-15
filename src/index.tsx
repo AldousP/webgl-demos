@@ -7,7 +7,7 @@ import 'static/scss/app.scss';
 import 'normalize.css/normalize.css';
 
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom';
 import { effectsMiddleware } from 'redux-effex';
 import { persistStore, persistCombineReducers } from 'redux-persist'
 import { Provider } from 'react-redux';

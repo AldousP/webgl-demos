@@ -1,10 +1,11 @@
-import { mat4, vec3 } from "gl-matrix";
+import { mat4, vec2, vec3 } from "gl-matrix";
 import Shader from 'src/types/shader';
 import DefaultShader from 'src/shader-wrappers/default';
 import Entity from 'src/types/entity';
 import { initializeShader, setShaderData } from 'src/util/gl';
 import { RenderableScene } from 'src/components/scene-components/scene-viewport';
 import Color from '@app/types/color';
+import { clampRange } from '@app/util/math';
 
 interface Args {
   color: Color,
@@ -83,8 +84,9 @@ class Scene2 implements RenderableScene {
     this.renderEntity( this.sampleCube, gl );
   }
 
-  onSwipe ( diff, elapsed ) {
-
+  onSwipe ( diff: vec2, elapsed: number ) {
+    console.log( elapsed );
+    console.log( clampRange( 0, 100, vec2.len( diff ) ) );
   }
 }
 

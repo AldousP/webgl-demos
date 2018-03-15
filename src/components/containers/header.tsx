@@ -35,15 +35,14 @@ class Header extends React.Component<Props, State > {
 
 const HeaderContainer = styled.div`
   max-width: 100vw;
-  font-family: 'Noto', serif;
   display: grid;
   font-family: ${ props => props.theme.type.headerFont };
   grid-template-columns: 164px 64px;
   justify-content: space-between;
   align-items: center;
   text-align: center;
-  padding-left: 8px;
-  padding-right: 8px;
+  padding-left: 16px;
+  padding-right: 16px;
   z-index: 3;
   box-shadow: ${ shadowMixin( 1 ) };
 `;

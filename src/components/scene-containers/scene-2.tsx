@@ -81,7 +81,7 @@ const SceneAndInputsWrapper = styled.div`
   display: flex;
   justify-content: flex-start;
   
-  @media ( max-width: 512px ) {
+  @media ( max-width: ${ breakpoints.med }px ) {
     flex-direction: column;
   }
 `;

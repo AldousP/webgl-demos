@@ -12,10 +12,10 @@ export type Module = {
 export type AppConfig = {
   title: string,
   url: string,
-  modules: [ Module ]
+  modules: Module[]
 }
 
-const AppConfig: AppConfig  = {
+const AppConfig: AppConfig = {
   title: 'WebGL Demos',
   url: 'https://github.com/AldousP/webgl-demos',
   modules: [
